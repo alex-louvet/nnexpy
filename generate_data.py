@@ -180,7 +180,3 @@ def createData(*args, **kwargs):
         'centerList': centerList,
         'radiusList': radiusList
     })
-
-
-temp = createData(nHoles=6)
-temp.generateData(classNumber=3).plot()
