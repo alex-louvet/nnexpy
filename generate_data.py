@@ -1,13 +1,71 @@
 class DataDescriptor(object):
     """docstring for DataDescriptor."""
 
-    def __init__(self, arg):
-        if len(arg['centerList']) != len(arg['radiusList']):
+    def __init__(self, *args, **kwargs):
+        import random as r
+        import math as m
+        bounds = kwargs.get('bounds',
+                            Bounds({
+                                'xmin': -1,
+                                'xmax': 1,
+                                'ymin': -1,
+                                'ymax': 1
+                            }))
+        centerList = kwargs.get('centerList', None)
+        radiusList = kwargs.get('radiusList', None)
+        random = kwargs.get('random', None)
+        nHoles = kwargs.get('nHoles', None)
+        maxRadius = min(bounds.xmax - bounds.xmin, bounds.ymax - bounds.ymin)
+
+        if random:
+            r.seed(random)
+        if not centerList and not nHoles and not radiusList:
             raise ValueError(
-                'centerList and radiusList length must be the same')
-        self.bounds = arg['bounds']
-        self.centerList = arg['centerList']
-        self.radiusList = arg['radiusList']
+                'Either centerList, nHoles, or radiusList is required')
+        if centerList and nHoles and nHoles != len(centerList):
+            raise ValueError(
+                "nHoles must be equal to the length of centerList")
+        elif radiusList and nHoles and nHoles != len(radiusList):
+            raise ValueError(
+                "nHoles must be equal to the length of radiusList")
+        elif centerList and radiusList and len(radiusList) != len(centerList):
+            raise ValueError(
+                "the length of radiusList must be equal to the length of centerList"
+            )
+
+        if not nHoles:
+            if radiusList:
+                nHoles = len(radiusList)
+            elif centerList:
+                nHoles = len(centerList)
+
+        if not radiusList:
+            radiusList = []
+            for _ in range(nHoles):
+                radiusList.append(r.random() * maxRadius / (nHoles))
+        if not centerList:
+            centerList = []
+            for _ in range(nHoles):
+                test = True
+                while test:
+                    test = False
+                    temp = DataPoint({
+                        'x':
+                        (bounds.xmax - bounds.xmin) * r.random() + bounds.xmin,
+                        'y': (bounds.ymax - bounds.ymin) * r.random() + bounds.ymin
+                    })
+                    if temp.x < bounds.xmin + radiusList[len(centerList)] or temp.y < bounds.ymin + radiusList[len(centerList)] or temp.x > bounds.xmax - radiusList[len(centerList)] or temp.y > bounds.ymax - radiusList[len(centerList)]:
+                        test = True
+                    else:
+                        for i, point in enumerate(centerList):
+                            if point.distanceTo(temp) <= radiusList[i] + radiusList[len(centerList)]:
+                                test = True
+                    if not test:
+                        centerList.append(temp)
+
+        self.bounds = bounds
+        self.centerList = centerList
+        self.radiusList = radiusList
 
     def plot(self):
         import math as m
@@ -113,70 +171,3 @@ class Bounds(object):
         self.xmax = arg['xmax']
         self.ymin = arg['ymin']
         self.ymax = arg['ymax']
-
-
-def createData(*args, **kwargs):
-    import random as r
-    import math as m
-    bounds = kwargs.get('bounds',
-                        Bounds({
-                            'xmin': -1,
-                            'xmax': 1,
-                            'ymin': -1,
-                            'ymax': 1
-                        }))
-    centerList = kwargs.get('centerList', None)
-    radiusList = kwargs.get('radiusList', None)
-    random = kwargs.get('random', None)
-    nHoles = kwargs.get('nHoles', None)
-    maxRadius = min(bounds.xmax - bounds.xmin, bounds.ymax - bounds.ymin)
-
-    if random:
-        r.seed(random)
-    if not centerList and not nHoles and not radiusList:
-        raise ValueError(
-            'Either centerList, nHoles, or radiusList is required')
-    if centerList and nHoles and nHoles != len(centerList):
-        raise ValueError("nHoles must be equal to the length of centerList")
-    elif radiusList and nHoles and nHoles != len(radiusList):
-        raise ValueError("nHoles must be equal to the length of radiusList")
-    elif centerList and radiusList and len(radiusList) != len(centerList):
-        raise ValueError(
-            "the length of radiusList must be equal to the length of centerList"
-        )
-
-    if not nHoles:
-        if radiusList:
-            nHoles = len(radiusList)
-        elif centerList:
-            nHoles = len(centerList)
-
-    if not radiusList:
-        radiusList = []
-        for _ in range(nHoles):
-            radiusList.append(r.random() * maxRadius / (nHoles))
-    if not centerList:
-        centerList = []
-        for _ in range(nHoles):
-            test = True
-            while test:
-                test = False
-                temp = DataPoint({
-                    'x':
-                    (bounds.xmax - bounds.xmin) * r.random() + bounds.xmin,
-                    'y': (bounds.ymax - bounds.ymin) * r.random() + bounds.ymin
-                })
-                if temp.x < bounds.xmin + radiusList[len(centerList)] or temp.y < bounds.ymin + radiusList[len(centerList)] or temp.x > bounds.xmax - radiusList[len(centerList)] or temp.y > bounds.ymax - radiusList[len(centerList)]:
-                    test = True
-                else:
-                    for i, point in enumerate(centerList):
-                        if point.distanceTo(temp) <= radiusList[i] + radiusList[len(centerList)]:
-                            test = True
-                if not test:
-                    centerList.append(temp)
-
-    return DataDescriptor({
-        "bounds": bounds,
-        'centerList': centerList,
-        'radiusList': radiusList
-    })
