@@ -25,5 +25,5 @@ model.compile(keras.optimizers.Adam(lr=.01),
               loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 model.fit(data, label, validation_split=0.2, batch_size=10,
           epochs=200, shuffle=True, verbose=2)
-ùpredictedTest = test.predict(model, verbose=0)
+predictedTest = test.predict(model, verbose=0)
 predictedTest.plot()
