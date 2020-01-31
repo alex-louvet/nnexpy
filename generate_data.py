@@ -67,6 +67,21 @@ class DataDescriptor(object):
         self.centerList = centerList
         self.radiusList = radiusList
 
+    def generateTestData(self, *args, **kwargs):
+        import random as r
+        import numpy as np
+        pointsNumber = kwargs.get('pointsNumber', 1000)
+        points = []
+        for _ in range(pointsNumber):
+            points.append(DataPoint({
+                'x':
+                (self.bounds.xmax - self.bounds.xmin) *
+                r.random() + self.bounds.xmin,
+                'y': (self.bounds.ymax - self.bounds.ymin) * r.random() + self.bounds.ymin,
+                'cluster': 0
+            }))
+        return DataInstance({'classNumber': 1, 'pointsNumber': pointsNumber, 'points': points})
+
     def plot(self):
         import math as m
         import matplotlib.pyplot as plt
@@ -146,6 +161,23 @@ class DataInstance(object):
             plt.plot()
         plt.axis('equal')
         plt.show()
+
+    def numpyify(self):
+        import numpy as np
+        return np.array([np.array([elt.x, elt.y]) for elt in self.points]), np.array([elt.cluster for elt in self.points])
+
+    def predict(self, model, *args, **kwargs):
+        data, label = self.numpyify()
+        label = model.predict_classes(
+            data, **kwargs)
+        points = []
+        for i in range(len(data)):
+            points.append(DataPoint({
+                'x': data[i][0],
+                'y': data[i][1],
+                'cluster': label[i]
+            }))
+        return DataInstance({'classNumber': max(label) + 1, 'pointsNumber': len(label), 'points': points})
 
 
 class DataPoint(object):
