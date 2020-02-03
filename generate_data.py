@@ -13,6 +13,7 @@ class DataDescriptor(object):
                             }))
         centerList = kwargs.get('centerList', None)
         radiusList = kwargs.get('radiusList', None)
+        maxStrata = kwargs.get('maxStrata', 1)
         random = kwargs.get('random', None)
         nHoles = kwargs.get('nHoles', None)
         maxRadius = min(bounds.xmax - bounds.xmin, bounds.ymax - bounds.ymin)
@@ -42,7 +43,14 @@ class DataDescriptor(object):
         if not radiusList:
             radiusList = []
             for _ in range(nHoles):
-                radiusList.append(r.random() * maxRadius / (nHoles))
+                temp = []
+                for _ in range(r.randint(1, maxStrata)):
+                    temp.append(r.random() * maxRadius / (nHoles))
+                    temp.append(r.random() * maxRadius / (nHoles))
+                temp.sort()
+                radiusList.append([(temp[2 * i], temp[2 * i + 1])
+                                   for i in range(len(temp) // 2)])
+
         if not centerList:
             centerList = []
             for _ in range(nHoles):
@@ -54,11 +62,11 @@ class DataDescriptor(object):
                         (bounds.xmax - bounds.xmin) * r.random() + bounds.xmin,
                         'y': (bounds.ymax - bounds.ymin) * r.random() + bounds.ymin
                     })
-                    if temp.x < bounds.xmin + radiusList[len(centerList)] or temp.y < bounds.ymin + radiusList[len(centerList)] or temp.x > bounds.xmax - radiusList[len(centerList)] or temp.y > bounds.ymax - radiusList[len(centerList)]:
+                    if temp.x < bounds.xmin + radiusList[len(centerList)][-1][1] or temp.y < bounds.ymin + radiusList[len(centerList)][-1][1] or temp.x > bounds.xmax - radiusList[len(centerList)][-1][1] or temp.y > bounds.ymax - radiusList[len(centerList)][-1][1]:
                         test = True
                     else:
                         for i, point in enumerate(centerList):
-                            if point.distanceTo(temp) <= radiusList[i] + radiusList[len(centerList)]:
+                            if point.distanceTo(temp) <= radiusList[i][-1][1] + radiusList[len(centerList)][-1][1]:
                                 test = True
                     if not test:
                         centerList.append(temp)
@@ -110,11 +118,15 @@ class DataDescriptor(object):
                 'classNumber must be at least 2')
 
         for classIndex in range(1, classNumber):
-            pointDistribution = np.array([radius for (i, radius) in enumerate(
-                self.radiusList) if i % (classNumber - 1) == classIndex - 1])
-            overallSquaredSum = np.sum(pointDistribution**2)
+            pointDistribution = []
+            for (i, radius) in enumerate(self.radiusList):
+                if i % (classNumber - 1) == classIndex - 1:
+                    pointDistribution.append(
+                        sum([x[1]**2 - x[0]**2 for x in radius]))
+            pointDistribution = np.array(pointDistribution)
+            overallSquaredSum = np.sum(pointDistribution)
             pointDistribution = np.round(
-                pointDistribution**2 * pointsNumber / overallSquaredSum)
+                pointDistribution * pointsNumber / overallSquaredSum)
             for i in range(len(pointDistribution)):
                 center = self.centerList[i *
                                          (classNumber - 1) + (classIndex - 1)]
@@ -122,9 +134,10 @@ class DataDescriptor(object):
                                          (classNumber - 1) + (classIndex - 1)]
                 for _ in range(int(pointDistribution[i])):
                     position = r.random()
+                    stratum = r.choice(radius)
                     radiusProp = r.random()
-                    points.append(DataPoint({'x': center.x + radiusProp * radius * m.cos(position * 2.0 * m.pi),
-                                             'y': center.y + radiusProp * radius * m.sin(position * 2.0 * m.pi), 'cluster': classIndex}))
+                    points.append(DataPoint({'x': center.x + (radiusProp * stratum[0] + (1 - radiusProp) * stratum[1]) * m.cos(position * 2.0 * m.pi),
+                                             'y': center.y + (radiusProp * stratum[0] + (1 - radiusProp) * stratum[1]) * m.sin(position * 2.0 * m.pi), 'cluster': classIndex}))
         for _ in range(pointsNumber):
             test = False
             while not test:
@@ -137,8 +150,9 @@ class DataDescriptor(object):
                     'cluster': 0
                 })
                 for holeIndex in range(len(self.centerList)):
-                    if temp.distanceTo(self.centerList[holeIndex]) <= self.radiusList[holeIndex]:
-                        test = False
+                    for stratum in self.radiusList[holeIndex]:
+                        if temp.distanceTo(self.centerList[holeIndex]) <= stratum[1] and temp.distanceTo(self.centerList[holeIndex]) >= stratum[0]:
+                            test = False
                 if test:
                     points.append(temp)
         return DataInstance({'classNumber': classNumber, 'pointsNumber': pointsNumber, 'points': points})
@@ -157,7 +171,7 @@ class DataInstance(object):
         for k in range(self.classNumber):
             X = [point.x for point in self.points if point.cluster == k]
             Y = [point.y for point in self.points if point.cluster == k]
-            plt.scatter(X, Y, marker='.')
+            plt.scatter(X, Y, marker='.', s=[0.3] * len(X))
             plt.plot()
         plt.axis('equal')
         plt.show()
