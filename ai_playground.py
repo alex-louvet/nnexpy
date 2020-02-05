@@ -66,5 +66,3 @@ model4.fit(data, label, validation_split=0.2, batch_size=10,
            epochs=200, shuffle=True, verbose=2)
 predictedTest = test.predict(model4, verbose=0)
 predictedTest.plot()
-
-# This is a test for test purpose
