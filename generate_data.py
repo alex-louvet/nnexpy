@@ -44,9 +44,11 @@ class DataDescriptor(object):
             radiusList = []
             for _ in range(nHoles):
                 temp = []
-                for _ in range(r.randint(1, maxStrata)):
-                    temp.append(r.random() * maxRadius / (nHoles))
-                    temp.append(r.random() * maxRadius / (nHoles))
+                temp.append(0)
+                temp.append(r.random() * maxRadius / (2 * (nHoles)))
+                for _ in range(1, r.randint(1, maxStrata)):
+                    temp.append(r.random() * maxRadius / (2 * (nHoles)))
+                    temp.append(r.random() * maxRadius / (2 * nHoles))
                 temp.sort()
                 radiusList.append([(temp[2 * i], temp[2 * i + 1])
                                    for i in range(len(temp) // 2)])
