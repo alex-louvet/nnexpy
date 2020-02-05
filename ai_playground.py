@@ -37,7 +37,7 @@ model4 = keras.Sequential([
     keras.layers.Dense(8, activation='relu'),
     keras.layers.Dense(4, activation='softmax')
 ])
-"""
+
 model1.summary()
 model1.compile(keras.optimizers.Adam(lr=.01),
                loss='sparse_categorical_crossentropy', metrics=['accuracy'])
@@ -59,7 +59,6 @@ model3.fit(data, label, validation_split=0.2, batch_size=10,
            epochs=20, shuffle=True, verbose=2)
 predictedTest = test.predict(model3, verbose=0)
 predictedTest.plot()
-"""
 model4.summary()
 model4.compile(keras.optimizers.Adam(lr=.01),
                loss='sparse_categorical_crossentropy', metrics=['accuracy'])
