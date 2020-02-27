@@ -195,6 +195,17 @@ class DataInstance(object):
             }))
         return DataInstance({'classNumber': max(label) + 1, 'pointsNumber': len(label), 'points': points})
 
+    def predict_and_evaluate(self, model, *args, **kwargs):
+        data, label = self.numpyify()
+        label_evaluation = model.predict_classes(
+            data, **kwargs)
+        points = []
+        res = 0
+        for i in range(len(label)):
+            if label[i] == label_evaluation[i]:
+                res += 1
+        return res / len(label)
+
 
 class DataPoint(object):
     """docstring for DataPoint."""
