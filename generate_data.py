@@ -183,6 +183,7 @@ class DataInstance(object):
         return np.array([np.array([elt.x, elt.y]) for elt in self.points]), np.array([elt.cluster for elt in self.points])
 
     def predict(self, model, *args, **kwargs):
+        import numpy as np
         data, label = self.numpyify()
         label = model.predict_classes(
             data, **kwargs)
@@ -193,7 +194,7 @@ class DataInstance(object):
                 'y': data[i][1],
                 'cluster': label[i]
             }))
-        return DataInstance({'classNumber': max(label) + 1, 'pointsNumber': len(label), 'points': points})
+        return DataInstance({'classNumber': np.max(label) + 1, 'pointsNumber': len(label), 'points': points})
 
     def predict_and_evaluate(self, model, *args, **kwargs):
         data, label = self.numpyify()
