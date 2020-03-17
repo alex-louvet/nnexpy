@@ -46,7 +46,7 @@ class DataDescriptor(object):
                 temp = []
                 temp.append(0)
                 temp.append(r.random() * maxRadius / (2 * (nHoles)))
-                for _ in range(1, r.randint(1, maxStrata)):
+                for _ in range(1, maxStrata):
                     temp.append(r.random() * maxRadius / (2 * (nHoles)))
                     temp.append(r.random() * maxRadius / (2 * nHoles))
                 temp.sort()
