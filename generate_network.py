@@ -27,10 +27,11 @@ def train_and_save(*args, **kwargs):
     save_path = kwargs.get('save_path', './model.h5')
     callbacks = kwargs.get('callbacks', None)
     batch_size = kwargs.get('batch_size', 10)
+    loss = kwargs.get('loss', 'sparse_categorical_crossentropy')
 
     model.summary()
     model.compile(keras.optimizers.Adam(lr=.01),
-                  loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+                  loss=loss, metrics=['accuracy'])
     model.fit(data, label, validation_split=0.2, batch_size=batch_size,
               epochs=epoch_number, shuffle=True, verbose=2, callbacks=callbacks)
     model.save(save_path)
