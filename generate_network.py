@@ -7,13 +7,13 @@ def build_model(*args, **kwargs):
     output_dimension = kwargs.get('output_dimension', 2)
     activation = kwargs.get('activation', 'relu')
 
-    model = keras.Sequential([
-        keras.layers.Dense(width, input_shape=input_shape,
-                           activation=activation)
-    ])
-    for _ in range(depth - 1):
-        model.add(keras.layers.Dense(width, activation=activation))
-    model.add(keras.layers.Dense(output_dimension, activation='softmax'))
+    model = keras.Sequential()
+
+    model.add(keras.layers.Dense(8, input_dim=input_shape[0], activation=activation,
+                                 kernel_initializer='he_uniform'))
+    for _ in range(depth - 2):
+        model.add(keras.layers.Dense(8, activation=activation))
+    model.add(keras.layers.Dense(1, activation='sigmoid'))
     return model
 
 
@@ -30,7 +30,8 @@ def train_and_save(*args, **kwargs):
     loss = kwargs.get('loss', 'sparse_categorical_crossentropy')
 
     model.summary()
-    model.compile(keras.optimizers.Adam(lr=.01),
+    opt = keras.optimizers.SGD(lr=0.01, momentum=0.9)
+    model.compile(opt,
                   loss=loss, metrics=['accuracy'])
     model.fit(data, label, validation_split=0.2, batch_size=batch_size,
               epochs=epoch_number, shuffle=True, verbose=2, callbacks=callbacks)
