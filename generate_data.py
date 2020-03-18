@@ -26,13 +26,6 @@ class DataDescriptor(object):
         if centerList and nHoles and nHoles != len(centerList):
             raise ValueError(
                 "nHoles must be equal to the length of centerList")
-        elif radiusList and nHoles and nHoles != len(radiusList):
-            raise ValueError(
-                "nHoles must be equal to the length of radiusList")
-        elif centerList and radiusList and len(radiusList) != len(centerList):
-            raise ValueError(
-                "the length of radiusList must be equal to the length of centerList"
-            )
 
         if not nHoles:
             if radiusList:
