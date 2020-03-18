@@ -11,7 +11,7 @@ def build_model(*args, **kwargs):
 
     model.add(keras.layers.Dense(8, input_dim=input_shape[0], activation=activation,
                                  kernel_initializer='he_uniform'))
-    for _ in range(depth - 2):
+    for _ in range(depth):
         model.add(keras.layers.Dense(8, activation=activation))
     model.add(keras.layers.Dense(1, activation='sigmoid'))
     return model
