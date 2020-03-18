@@ -3,13 +3,22 @@ import numpy as np
 from tensorflow import keras
 from sklearn.utils import shuffle
 from generate_network import *
+import pickle
 
-dataDescriptor = DataDescriptor(nHoles=1, centerList=[DataPoint({"x": 0.5, "y": 0.5})], radiusList=[[(0, 0.05), (0.15, 0.16), (0.3, 0.31)]], random=468643654, bounds=Bounds({
+randomSeed = 468643654
+
+dataDescriptor = DataDescriptor(nHoles=1, centerList=[DataPoint({"x": 0.5, "y": 0.5})], radiusList=[[(0, 0.05), (0.15, 0.16), (0.3, 0.31)]], random=randomSeed, bounds=Bounds({
     'xmin': 0,
     'xmax': 1,
     'ymin': 0,
     'ymax': 1
 }))
+
+with open('./models/data_descriptor.pkl', 'wb') as output:
+    pickle.dump(dataDescriptor.centerList, output, pickle.HIGHEST_PROTOCOL)
+    pickle.dump(dataDescriptor.radiusList, output, pickle.HIGHEST_PROTOCOL)
+    pickle.dump(dataDescriptor.bounds, output, pickle.HIGHEST_PROTOCOL)
+    pickle.dump(randomSeed, output, pickle.HIGHEST_PROTOCOL)
 
 instance = dataDescriptor.generateData(classNumber=2, pointsNumber=10000)
 data, label = instance.numpyify()
