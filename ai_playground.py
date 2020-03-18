@@ -25,24 +25,24 @@ model4 = build_model(depth=4, input_shape=(2,), width=8,
                      output_dimension=2, activation='relu')
 
 model8 = build_model(depth=8, input_shape=(2,), width=8,
-                     output_dimension=2, activation='relu'))
+                     output_dimension=2, activation='relu')
 
-csv_logger=keras.callbacks.CSVLogger(
-    './models/1layer.csv', separator = ',', append = False)
-train_and_save(model = model1, epoch_number = 2, data = data,
-               label = label, save_path = './models/1layers.h5', batch_size = 64, loss = "binary_crossentropy", callbacks = [csv_logger])
+csv_logger = keras.callbacks.CSVLogger(
+    './models/1layer.csv', separator=',', append=False)
+train_and_save(model=model1, epoch_number=200, data=data,
+               label=label, save_path='./models/1layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
-csv_logger=keras.callbacks.CSVLogger(
-    './models/2layers.csv', separator = ',', append = False)
-train_and_save(model = model2, epoch_number = 2, data = data,
-               label = label, save_path = './models/2layers.h5', batch_size = 64, loss = "binary_crossentropy", callbacks = [csv_logger])
+csv_logger = keras.callbacks.CSVLogger(
+    './models/2layers.csv', separator=',', append=False)
+train_and_save(model=model2, epoch_number=200, data=data,
+               label=label, save_path='./models/2layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
-csv_logger=keras.callbacks.CSVLogger(
-    './models/4layers.csv', separator = ',', append = False)
-train_and_save(model = model4, epoch_number = 2, data = data,
-               label = label, save_path = './models/4layers.h5', batch_size = 64, loss = "binary_crossentropy", callbacks = [csv_logger])
+csv_logger = keras.callbacks.CSVLogger(
+    './models/4layers.csv', separator=',', append=False)
+train_and_save(model=model4, epoch_number=200, data=data,
+               label=label, save_path='./models/4layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
-csv_logger=keras.callbacks.CSVLogger(
-    './models/8layers.csv', separator = ',', append = False)
-train_and_save(model = model8, epoch_number = 2, data = data,
-               label = label, save_path = './models/8layers.h5', batch_size = 64, loss = "binary_crossentropy", callbacks = [csv_logger])
+csv_logger = keras.callbacks.CSVLogger(
+    './models/8layers.csv', separator=',', append=False)
+train_and_save(model=model8, epoch_number=200, data=data,
+               label=label, save_path='./models/8layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
