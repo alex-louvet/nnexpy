@@ -211,7 +211,7 @@ class DataInstance(object):
             if point.cluster in targetCluster and random < nPoints / self.pointsNumber:
                 pointList.append([point.x, point.y])
         rips_complex = gudhi.RipsComplex(
-            points=pointList, sparse=0.1, max_edge_length=0.1)
+            points=pointList, max_edge_length=0.05)
         simplex_tree = rips_complex.create_simplex_tree(max_dimension=2)
         simplex_tree.persistence()
         return simplex_tree.betti_numbers()
