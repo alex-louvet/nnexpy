@@ -27,8 +27,12 @@ data, label = instance.numpyify()
 data, label = shuffle(data, label, random_state=0)
 
 iterNum = 1
+epoch_number = 1000
 if (len(sys.argv) > 1):
     iterNum = int(sys.argv[1])
+
+if (len(sys.argv) > 2):
+    epoch_number = int(sys.argv[2])
 
 for i in range(iterNum):
     mypath = './models/training_' + str(i)
@@ -55,20 +59,20 @@ for i in range(iterNum):
 
     csv_logger = keras.callbacks.CSVLogger(
         mypath + '1layer.csv', separator=',', append=False)
-    train_and_save(model=model1, epoch_number=1000, data=data,
+    train_and_save(model=model1, epoch_number=epoch_number, data=data,
                    label=label, save_path=mypath + '1layer.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
     csv_logger = keras.callbacks.CSVLogger(
         mypath + '2layers.csv', separator=',', append=False)
-    train_and_save(model=model2, epoch_number=1000, data=data,
+    train_and_save(model=model2, epoch_number=epoch_number, data=data,
                    label=label, save_path=mypath + '2layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
     csv_logger = keras.callbacks.CSVLogger(
         mypath + '4layers.csv', separator=',', append=False)
-    train_and_save(model=model4, epoch_number=1000, data=data,
+    train_and_save(model=model4, epoch_number=epoch_number, data=data,
                    label=label, save_path=mypath + '4layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
     csv_logger = keras.callbacks.CSVLogger(
         mypath + '8layers.csv', separator=',', append=False)
-    train_and_save(model=model8, epoch_number=1000, data=data,
+    train_and_save(model=model8, epoch_number=epoch_number, data=data,
                    label=label, save_path=mypath + '8layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
