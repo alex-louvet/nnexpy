@@ -4,10 +4,12 @@ from tensorflow import keras
 from sklearn.utils import shuffle
 from generate_network import *
 import pickle
+import os
+import sys
 
 randomSeed = 468643654
 
-dataDescriptor = DataDescriptor(nHoles=1, centerList=[DataPoint({"x": 0.5, "y": 0.5})], radiusList=[[(0, 0.05), (0.15, 0.16), (0.3, 0.31)]], random=randomSeed, bounds=Bounds({
+dataDescriptor = DataDescriptor(nHoles=2, centerList=[DataPoint({"x": 0.25, "y": 0.25}), DataPoint({"x": 0.75, "y": 0.75})], radiusList=[[(0, 0.05), (0.15, 0.16)], [(0, 0.05), (0.15, 0.16)]], random=randomSeed, bounds=Bounds({
     'xmin': 0,
     'xmax': 1,
     'ymin': 0,
@@ -24,34 +26,49 @@ instance = dataDescriptor.generateData(classNumber=2, pointsNumber=10000)
 data, label = instance.numpyify()
 data, label = shuffle(data, label, random_state=0)
 
-model1 = build_model(depth=1, input_shape=(2,), width=8,
-                     output_dimension=2, activation='relu')
+iterNum = 1
+if (len(sys.argv) > 1):
+    iterNum = int(sys.argv[1])
 
-model2 = build_model(depth=2, input_shape=(2,), width=8,
-                     output_dimension=2, activation='relu')
+for i in range(iterNum):
+    mypath = './models/training_' + str(i)
+    print('\n\n\n################################################# ' +
+          str(i) + ' ##########################################\n\n\n')
+    if not os.path.exists(mypath):
+        os.makedirs(mypath)
+    else:
+        for root, dirs, files in os.walk(mypath):
+            for file in files:
+                os.remove(os.path.join(root, file))
 
-model4 = build_model(depth=4, input_shape=(2,), width=8,
-                     output_dimension=2, activation='relu')
+    model1 = build_model(depth=1, input_shape=(2,), width=8,
+                         output_dimension=2, activation='relu')
 
-model8 = build_model(depth=8, input_shape=(2,), width=8,
-                     output_dimension=2, activation='relu')
+    model2 = build_model(depth=2, input_shape=(2,), width=8,
+                         output_dimension=2, activation='relu')
 
-csv_logger = keras.callbacks.CSVLogger(
-    './models/1layer.csv', separator=',', append=False)
-train_and_save(model=model1, epoch_number=200, data=data,
-               label=label, save_path='./models/1layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+    model4 = build_model(depth=4, input_shape=(2,), width=8,
+                         output_dimension=2, activation='relu')
 
-csv_logger = keras.callbacks.CSVLogger(
-    './models/2layers.csv', separator=',', append=False)
-train_and_save(model=model2, epoch_number=200, data=data,
-               label=label, save_path='./models/2layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+    model8 = build_model(depth=8, input_shape=(2,), width=8,
+                         output_dimension=2, activation='relu')
 
-csv_logger = keras.callbacks.CSVLogger(
-    './models/4layers.csv', separator=',', append=False)
-train_and_save(model=model4, epoch_number=200, data=data,
-               label=label, save_path='./models/4layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+    csv_logger = keras.callbacks.CSVLogger(
+        mypath + '1layer.csv', separator=',', append=False)
+    train_and_save(model=model1, epoch_number=1000, data=data,
+                   label=label, save_path=mypath + '1layer.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
-csv_logger = keras.callbacks.CSVLogger(
-    './models/8layers.csv', separator=',', append=False)
-train_and_save(model=model8, epoch_number=200, data=data,
-               label=label, save_path='./models/8layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+    csv_logger = keras.callbacks.CSVLogger(
+        mypath + '2layers.csv', separator=',', append=False)
+    train_and_save(model=model2, epoch_number=1000, data=data,
+                   label=label, save_path=mypath + '2layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+
+    csv_logger = keras.callbacks.CSVLogger(
+        mypath + '4layers.csv', separator=',', append=False)
+    train_and_save(model=model4, epoch_number=1000, data=data,
+                   label=label, save_path=mypath + '4layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+
+    csv_logger = keras.callbacks.CSVLogger(
+        mypath + '8layers.csv', separator=',', append=False)
+    train_and_save(model=model8, epoch_number=1000, data=data,
+                   label=label, save_path=mypath + '8layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
