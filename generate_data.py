@@ -200,6 +200,22 @@ class DataInstance(object):
                 res += 1
         return res / len(label)
 
+    def bettiNumbers(self, *args, **kwargs):
+        import gudhi
+        import random as r
+        nPoints = kwargs.get('nPoints', 1000)
+        targetCluster = kwargs.get('targetCluster', [1])
+        pointList = []
+        for point in self.points:
+            random = r.random()
+            if point.cluster in targetCluster and random < nPoints / self.pointsNumber:
+                pointList.append([point.x, point.y])
+        rips_complex = gudhi.RipsComplex(
+            points=pointList, sparse=0.1, max_edge_length=0.1)
+        simplex_tree = rips_complex.create_simplex_tree(max_dimension=2)
+        simplex_tree.persistence()
+        return simplex_tree.betti_numbers()
+
 
 class DataPoint(object):
     """docstring for DataPoint."""
