@@ -21,7 +21,7 @@ instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
 data_betti = instance.bettiNumbers(nPoints=5000)
 test = dataDescriptor.generateTestData(pointsNumber=50000)
 
-for directory in [x[0] for x in os.walk(mypath)]:
+for directory in [x[0] for x in walk(mypath)]:
 
     model1 = keras.models.load_model(directory + '1layer.h5')
     model2 = keras.models.load_model(directory + '2layers.h5')
