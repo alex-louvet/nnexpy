@@ -21,12 +21,12 @@ instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
 data_betti = instance.bettiNumbers(nPoints=5000)
 test = dataDescriptor.generateTestData(pointsNumber=50000)
 
-for directory in [x[0] for x in walk(mypath)]:
+for directory in [x[0] for x in walk(mypath)][1:]:
 
-    model1 = keras.models.load_model(directory + '1layer.h5')
-    model2 = keras.models.load_model(directory + '2layers.h5')
-    model4 = keras.models.load_model(directory + '4layers.h5')
-    model8 = keras.models.load_model(directory + '8layers.h5')
+    model1 = keras.models.load_model(directory + '/1layer.h5')
+    model2 = keras.models.load_model(directory + '/2layers.h5')
+    model4 = keras.models.load_model(directory + '/4layers.h5')
+    model8 = keras.models.load_model(directory + '/8layers.h5')
 
     predictedTest = test.predict(model1, verbose=0)
     if predictedTest.bettiNumbers(nPoints=10000) == data_betti:
