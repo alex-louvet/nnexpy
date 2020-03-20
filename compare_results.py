@@ -18,7 +18,7 @@ dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
                                 radiusList=radiusList, random=t.time(), bounds=bounds)
 
 instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
-data_betti = instance.bettiNumbers(nPoints=5000)
+data_betti = instance.bettiNumbers(nPoints=2500)
 test = dataDescriptor.generateTestData(pointsNumber=50000)
 
 for directory in [x[0] for x in walk(mypath)][1:]:
