@@ -35,7 +35,7 @@ if (len(sys.argv) > 2):
     epoch_number = int(sys.argv[2])
 
 for i in range(iterNum):
-    mypath = './models/training_' + str(i)
+    mypath = './models/training_' + str(i) + '/'
     print('\n\n\n################################################# ' +
           str(i) + ' ##########################################\n\n\n')
     if not os.path.exists(mypath):
