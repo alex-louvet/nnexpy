@@ -9,6 +9,8 @@ import sys
 
 randomSeed = 468643654
 
+myRootPath = "./models2/"
+
 dataDescriptor = DataDescriptor(nHoles=2, centerList=[DataPoint({"x": 0.25, "y": 0.25}), DataPoint({"x": 0.75, "y": 0.75})], radiusList=[[(0, 0.05), (0.15, 0.16)], [(0, 0.05), (0.15, 0.16)]], random=randomSeed, bounds=Bounds({
     'xmin': 0,
     'xmax': 1,
@@ -16,7 +18,7 @@ dataDescriptor = DataDescriptor(nHoles=2, centerList=[DataPoint({"x": 0.25, "y":
     'ymax': 1
 }))
 
-with open('./models/data_descriptor.pkl', 'wb') as output:
+with open(myRootPath + 'data_descriptor.pkl', 'wb') as output:
     pickle.dump(dataDescriptor.centerList, output, pickle.HIGHEST_PROTOCOL)
     pickle.dump(dataDescriptor.radiusList, output, pickle.HIGHEST_PROTOCOL)
     pickle.dump(dataDescriptor.bounds, output, pickle.HIGHEST_PROTOCOL)
@@ -28,14 +30,23 @@ data, label = shuffle(data, label, random_state=0)
 
 iterNum = 1
 epoch_number = 1000
+startIter = 0
 if (len(sys.argv) > 1):
     iterNum = int(sys.argv[1])
 
 if (len(sys.argv) > 2):
     epoch_number = int(sys.argv[2])
 
-for i in range(iterNum):
-    mypath = './models/training_' + str(i) + '/'
+if (len(sys.argv) > 3):
+    startIter = int(sys.argv[3])
+
+file = open(myRootPath + 'information.txt', 'w')
+file.write('Iteration Number: ' + str(iterNum))
+file.write('Epoch Number: ' + str(epoch_number))
+file.close()
+
+for i in range(startIter, startIter + iterNum):
+    mypath = myRootPath + 'training_' + str(i) + '/'
     print('\n\n\n################################################# ' +
           str(i) + ' ##########################################\n\n\n')
     if not os.path.exists(mypath):
@@ -57,6 +68,9 @@ for i in range(iterNum):
     model8 = build_model(depth=8, input_shape=(2,), width=8,
                          output_dimension=2, activation='relu')
 
+    model16 = build_model(depth=16, input_shape=(2,), width=8,
+                          output_dimension=2, activation='relu')
+
     csv_logger = keras.callbacks.CSVLogger(
         mypath + '1layer.csv', separator=',', append=False)
     train_and_save(model=model1, epoch_number=epoch_number, data=data,
@@ -76,3 +90,8 @@ for i in range(iterNum):
         mypath + '8layers.csv', separator=',', append=False)
     train_and_save(model=model8, epoch_number=epoch_number, data=data,
                    label=label, save_path=mypath + '8layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+
+    csv_logger = keras.callbacks.CSVLogger(
+        mypath + '16layers.csv', separator=',', append=False)
+    train_and_save(model=model8, epoch_number=epoch_number, data=data,
+                   label=label, save_path=mypath + '16layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
