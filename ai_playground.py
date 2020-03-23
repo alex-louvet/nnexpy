@@ -41,8 +41,8 @@ if (len(sys.argv) > 3):
     startIter = int(sys.argv[3])
 
 file = open(myRootPath + 'information.txt', 'w')
-file.write('Iteration Number: ' + str(iterNum))
-file.write('Epoch Number: ' + str(epoch_number))
+file.write('Iteration Number: ' + str(iterNum) + "\n")
+file.write('Epoch Number: ' + str(epoch_number) + "\n")
 file.close()
 
 for i in range(startIter, startIter + iterNum):

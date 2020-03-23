@@ -28,20 +28,25 @@ for directory in [x[0] for x in walk(mypath)][1:]:
     model4 = keras.models.load_model(directory + '/4layers.h5')
     model8 = keras.models.load_model(directory + '/8layers.h5')
 
-    predictedTest = test.predict(model1, verbose=0)
+    predictedTest = test.predict(model1, verbose=1)
     if predictedTest.bettiNumbers(nPoints=10000) == data_betti:
         score[0] += 1
 
-    predictedTest = test.predict(model2, verbose=0)
+    predictedTest = test.predict(model2, verbose=1)
     if predictedTest.bettiNumbers(nPoints=10000) == data_betti:
         score[1] += 1
 
-    predictedTest = test.predict(model4, verbose=0)
+    predictedTest = test.predict(model4, verbose=1)
     if predictedTest.bettiNumbers(nPoints=10000) == data_betti:
         score[2] += 1
 
-    predictedTest = test.predict(model8, verbose=0)
+    predictedTest = test.predict(model8, verbose=1)
     if predictedTest.bettiNumbers(nPoints=10000) == data_betti:
         score[3] += 1
 
 print(score)
+
+file = open(mypath + 'information.txt')
+file.write('Data Betti Numbers: ' + str(data_betti) + "\n")
+file.write('# of correspondence: ' + str(score) + "\n")
+file.close()
