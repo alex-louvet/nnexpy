@@ -30,8 +30,7 @@ def train_and_save(*args, **kwargs):
     loss = kwargs.get('loss', 'sparse_categorical_crossentropy')
 
     model.summary()
-    opt = keras.optimizers.SGD(lr=0.01, momentum=0.9)
-    model.compile(opt,
+    model.compile(optimizer="adam",
                   loss=loss, metrics=['accuracy'])
     model.fit(data, label, validation_split=0.2, batch_size=batch_size,
               epochs=epoch_number, shuffle=True, verbose=2, callbacks=callbacks)
