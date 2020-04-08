@@ -22,7 +22,6 @@ dataDescriptorList = [
         0.7, 0.72, 0.75, 0.71)), DataPoint(coordinates=(0.1, 0.72, 0.75, 0.09))], radiusList=[[(0, 0.08), (0.15, 0.17)], [(0.05, 0.15)], [(0, 0.07)]])
 ]
 
-breakpoint()
 iterNum = 1
 epoch_number = 1000
 startIter = 0
@@ -35,9 +34,9 @@ if (len(sys.argv) > 2):
 if (len(sys.argv) > 3):
     startIter = int(sys.argv[3])
 
-for i, x in enumerate(dataDescriptorList):
+for j, x in enumerate(dataDescriptorList):
 
-    myRootPath = "./models/instance_" + str(i) + "/"
+    myRootPath = "./models/instance_" + str(j) + "/"
 
     if not os.path.exists(myRootPath):
         os.makedirs(myRootPath)
@@ -63,6 +62,7 @@ for i, x in enumerate(dataDescriptorList):
     file.write('Epoch Number: ' + str(epoch_number) + "\n")
     file.close()
 
+    input_shape = (len(dataDescriptor.centerList[0].coordinates),)
     for i in range(startIter, startIter + iterNum):
         mypath = myRootPath + 'training_' + str(i) + '/'
         print('\n\n\n################################################# ' +
@@ -74,19 +74,19 @@ for i, x in enumerate(dataDescriptorList):
                 for file in files:
                     os.remove(os.path.join(root, file))
 
-        model1 = build_model(depth=1, input_shape=(2,), width=8,
+        model1 = build_model(depth=1, input_shape=input_shape, width=8,
                              output_dimension=2, activation='relu')
 
-        model2 = build_model(depth=2, input_shape=(2,), width=8,
+        model2 = build_model(depth=2, input_shape=input_shape, width=8,
                              output_dimension=2, activation='relu')
 
-        model4 = build_model(depth=4, input_shape=(2,), width=8,
+        model4 = build_model(depth=4, input_shape=input_shape, width=8,
                              output_dimension=2, activation='relu')
 
-        model8 = build_model(depth=8, input_shape=(2,), width=8,
+        model8 = build_model(depth=8, input_shape=input_shape, width=8,
                              output_dimension=2, activation='relu')
 
-        model16 = build_model(depth=16, input_shape=(2,), width=8,
+        model16 = build_model(depth=16, input_shape=input_shape, width=8,
                               output_dimension=2, activation='relu')
 
         csv_logger = keras.callbacks.CSVLogger(
@@ -114,6 +114,6 @@ for i, x in enumerate(dataDescriptorList):
         train_and_save(model=model8, epoch_number=epoch_number, data=data,
                        label=label, save_path=mypath + '16layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
-        shutil.make_archive("instance_" + str(i), 'zip', myRootPath)
-        sendEmail(["training " + str(i) + " job is over, archive in attachement",
-                   "./instance_" + str(i) + ".zip"], "training " + str(i) + " job is over")
+    shutil.make_archive("instance_" + str(j), 'zip', myRootPath)
+    sendEmail(["training " + str(j) + " job is over, archive in attachement",
+               "./instance_" + str(j) + ".zip"], "training " + str(j) + " job is over")
