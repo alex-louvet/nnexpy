@@ -1,6 +1,7 @@
 name: research
 channels:
   - anaconda
+  - conda-forge
   - defaults
 dependencies:
   - _libgcc_mutex=0.1=main
@@ -11,13 +12,17 @@ dependencies:
   - backcall=0.1.0=py37_0
   - blas=1.0=mkl
   - bleach=3.1.0=py37_0
+  - boost-cpp=1.70.0=ha2d47e9_1
+  - bzip2=1.0.8=h516909a_2
   - c-ares=1.15.0=h7b6447c_1001
-  - ca-certificates=2019.11.27=0
-  - certifi=2019.11.28=py37_0
+  - ca-certificates=2020.4.5.1=hecc5488_0
+  - certifi=2020.4.5.1=py37hc8dfbb8_0
+  - cgal-cpp=5.0.1=h261e690_0
   - cycler=0.10.0=py37_0
   - dbus=1.13.12=h746ee38_0
   - decorator=4.4.1=py_0
   - defusedxml=0.6.0=py_0
+  - eigen=3.3.7=hc9558a2_1001
   - entrypoints=0.3=py37_0
   - expat=2.2.6=he6710b0_0
   - fontconfig=2.13.0=h9420a91_0
@@ -29,6 +34,7 @@ dependencies:
   - grpcio=1.16.1=py37hf8bcb03_1
   - gst-plugins-base=1.14.0=hbbd80ab_1
   - gstreamer=1.14.0=hb453b48_1
+  - gudhi=3.1.1=py37hb3f55d8_0
   - h5py=2.10.0=py37h7918eee_0
   - hdf5=1.10.4=hb1b8bf9_0
   - icu=58.2=h9c2bf20_1
@@ -73,14 +79,16 @@ dependencies:
   - mkl_fft=1.0.15=py37ha843d7b_0
   - mkl_random=1.1.0=py37hd6b4f25_0
   - more-itertools=8.0.2=py_0
+  - mpfr=4.0.2=he80fd80_0
   - nbconvert=5.6.1=py37_0
   - nbformat=5.0.4=py_0
   - ncurses=6.1=he6710b0_1
   - notebook=6.0.3=py37_0
   - numpy=1.18.1=py37h4f9e942_0
   - numpy-base=1.18.1=py37hde5b4d6_1
-  - openssl=1.1.1=h7b6447c_0
+  - openssl=1.1.1f=h516909a_0
   - opt_einsum=3.1.0=py_0
+  - pandas=1.0.1=py37h0573a6f_0
   - pandoc=2.2.3.2=0
   - pandocfilters=1.4.2=py37_1
   - parso=0.6.0=py_0
@@ -98,6 +106,7 @@ dependencies:
   - pyrsistent=0.15.7=py37h7b6447c_0
   - python=3.7.6=h0371630_2
   - python-dateutil=2.8.1=py_0
+  - python_abi=3.7=1_cp37m
   - pytz=2019.3=py_0
   - pyyaml=5.2=py37h7b6447c_0
   - pyzmq=18.1.0=py37he6710b0_0
@@ -120,6 +129,7 @@ dependencies:
   - testpath=0.4.4=py_0
   - tk=8.6.8=hbc83047_0
   - tornado=6.0.3=py37h7b6447c_0
+  - tqdm=4.42.1=py_0
   - traitlets=4.3.3=py37_0
   - wcwidth=0.1.7=py37_0
   - webencodings=0.5.1=py37_1
@@ -128,9 +138,9 @@ dependencies:
   - widgetsnbextension=3.5.1=py37_0
   - wrapt=1.11.2=py37h7b6447c_0
   - xz=5.2.4=h14c3975_4
+  - yagmail=0.11.224=py_0
   - yaml=0.1.7=had09818_2
   - zeromq=4.3.1=he6710b0_3
   - zipp=0.6.0=py_0
   - zlib=1.2.11=h7b6447c_3
-prefix: /home/alexandre/.anaconda3/envs/research
 
