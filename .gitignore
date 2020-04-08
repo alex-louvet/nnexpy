@@ -131,4 +131,6 @@ dmypy.json
 # project specific
 /models
 test.py
+secret.py
+instance_*.zip
 *.ipynb
