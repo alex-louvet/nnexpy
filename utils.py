@@ -33,3 +33,16 @@ def circular3D(*args, **kwargs):
     res = np.linspace(0, 1, nPoints)
     height = np.linspace(-10, 10, nPoints)
     return np.array([(radius * np.cos(np.pi * 2 * x) + center[0], radius * np.sin(np.pi * 2 * x) + center[1], gaussian(height[i], a=temp, c=3) + center[2]) for i, x in enumerate(res)])
+
+
+def circular4D(*args, **kwargs):
+    import numpy as np
+    import random as r
+    nPoints = kwargs.get('nPoints', 1000)
+    radius = kwargs.get('radius', 1)
+    center = kwargs.get('center', (0, 0, 0, 0))
+    temp1 = kwargs.get('height1', r.random())
+    temp2 = kwargs.get('height2', r.random())
+    res = np.linspace(0, 1, nPoints)
+    height = np.linspace(-10, 10, nPoints)
+    return np.array([(radius * np.cos(np.pi * 2 * x) + center[0], radius * np.sin(np.pi * 2 * x) + center[1], gaussian(height[i], a=temp1, c=3) + center[2], gaussian(height[i], a=temp2, c=3) + center[3]) for i, x in enumerate(res)])
