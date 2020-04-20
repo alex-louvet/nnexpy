@@ -129,11 +129,88 @@ def figureEight4D(*args, **kwargs):
     random2 = r.random() - 0.5
     fourthd = np.array(list(np.linspace(min(random1, random2), max(random1, random2), num=8)) +
                        list(np.linspace(max(random1, random2), min(random1, random2), num=7)))
-    trefoil = np.array([(1, 0.5, 0.5, fourthd[0]), (-0.33, 0.66, 0, fourthd[1]), (0, 0, 1, fourthd[2]), (0.25, -0.5, 0.5, fourthd[3]), (0, -0.66, 0, fourthd[4]), (-1, 0, 0.5, fourthd[5]), (-0.33,
-                                                                                                                                                                                             0.66, 1, fourthd[6]), (0.33, 0.66, 0, fourthd[7]), (1, 0, 0.5, fourthd[8]), (0, -0.66, 1, fourthd[9]), (-0.25, -0.5, 0.5, fourthd[10]), (0, 0, 0, fourthd[11]), (0.33, 0.66, 1, fourthd[12])])
+    trefoil = np.array([(0, 1, 0.5, fourthd[0]), (-0.33, 0.66, 0, fourthd[1]), (0, 0, 1, fourthd[2]), (0.25, -0.5, 0.5, fourthd[3]), (0, -0.66, 0, fourthd[4]), (-1, 0, 0.5, fourthd[5]), (-0.33,
+                                                                                                                                                                                           0.66, 1, fourthd[6]), (0.33, 0.66, 0, fourthd[7]), (1, 0, 0.5, fourthd[8]), (0, -0.66, 1, fourthd[9]), (-0.25, -0.5, 0.5, fourthd[10]), (0, 0, 0, fourthd[11]), (0.33, 0.66, 1, fourthd[12])])
     trefoil = radius * trefoil + np.array(center)
     return bspline(trefoil, nPoints=nPoints)
 
 
-def trajectory_to_graph(trajectory):
-    return 0
+def ccw(A, B, C):
+    return (C[1] - A[1]) * (B[0] - A[0]) > (B[1] - A[1]) * (C[0] - A[0])
+
+
+def intersect(A, B, C, D):
+    return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
+
+
+def vectorProduct(A, B, C, D):
+    a = (B[0] - A[0], B[1] - A[1], B[2] - A[2])
+    b = (D[0] - C[0], D[1] - C[1], D[2] - C[2])
+    s = (a[1] * b[2] - a[2] * b[1], a[2] * b[0] -
+         a[0] * b[2], a[0] * b[1] - a[1] * b[0])
+    return (int(A[2] == max(A[2], C[2], D[2]) or B[2] == max(B[2], C[2], D[2])) * 2 - 1) * s[2]
+
+
+def ABIsUp(A, B, C, D):
+    return A[2] == max(A[2], C[2], D[2]) or B[2] == max(B[2], C[2], D[2])
+
+
+class knotDescriptor(object):
+    def __init__(self, trajectory):
+        crossing = []
+        component = []
+        already_seen = []
+        for i in range(len(trajectory) - 1):
+            for j in range(len(trajectory) - 1):
+                if intersect(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]) and abs(i - j) > 2 and not (i == 0 and j == len(trajectory) - 2 or i == len(trajectory) - 2 and j == 0):
+                    if vectorProduct(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]) > 0 and not (i, j) in already_seen and not (j, i) in already_seen:
+                        crossing.append(('r', i, j))
+                        already_seen.append((i, j))
+                    elif vectorProduct(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]) < 0 and not (i, j) in already_seen and not (j, i) in already_seen:
+                        crossing.append(('l', i, j))
+                        already_seen.append((i, j))
+                    if not ABIsUp(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]):
+                        if len(component) == 0:
+                            component.append((0, i))
+                        else:
+                            component.append((component[-1][1] + 1, i))
+        component[0] = (component[-1][1] + 1, component[1][0] - 1)
+
+        self.crossing = crossing
+        self.component = component
+
+    def findCrossingComponents(self, crossing):
+        if not crossing in self.crossing:
+            raise valueError(
+                "crossing must be one of the crossings of the knot")
+        c1 = 0
+        c2 = 0
+        c3 = 0
+        for i, x in enumerate(self.component):
+            if (crossing[1] == x[1] or crossing[2] == x[1]):
+                c2 = i
+                if i == len(self.component) - 1:
+                    c3 = 0
+                else:
+                    c3 = i + 1
+            if crossing[1] >= x[0] and crossing[1] < x[1] or crossing[2] >= x[0] and crossing[2] < x[1]:
+                c1 = i
+
+        return c1, c2, c3
+
+    def determinant(self):
+        import numpy as np
+        import math as m
+        matrix = np.zeros(
+            (len(self.crossing), len(self.component)), dtype=int)
+        for i, x in enumerate(self.crossing):
+            c1, c2, c3 = knotDescriptor.findCrossingComponents(self, x)
+            matrix[i][c1] = 2
+            matrix[i][c2] = -1
+            matrix[i][c3] = -1
+        matrix = np.delete(matrix, 0, 0)
+        matrix = np.delete(matrix, 0, 1)
+
+        det = int(np.round(abs(np.linalg.det(matrix))))
+        self.determinant = det
+        return det
