@@ -86,8 +86,8 @@ def trefoil3D(*args, **kwargs):
     nPoints = kwargs.get('nPoints', 1000)
     radius = kwargs.get('radius', 1)
     center = kwargs.get('center', (0, 0, 0))
-    trefoil = np.array([(1, 0.5, 0.5), (-0.33, 0.33, 1), (0, -0.5, 0), (1, -0.5, 0.5), (0.33,
-                                                                                        0.33, 1), (-0.33, 0.33, 0), (-1, -0.5, 0.5), (0, -0.5, 1), (0.33, 0.33, 0)])
+    trefoil = np.array([(0, 1, 0.5), (-0.33, 0.33, 1), (0, -0.5, 0), (1, -0.5, 0.5), (0.33,
+                                                                                      0.33, 1), (-0.33, 0.33, 0), (-1, -0.5, 0.5), (0, -0.5, 1), (0.33, 0.33, 0)])
     trefoil = radius * trefoil + np.array(center)
     return bspline(trefoil, nPoints=nPoints)
 
@@ -102,8 +102,8 @@ def trefoil4D(*args, **kwargs):
     random2 = r.random() - 0.5
     fourthd = np.array(list(np.linspace(min(random1, random2), max(random1, random2), num=5)) +
                        list(np.linspace(max(random1, random2), min(random1, random2), num=4)))
-    trefoil = np.array([(1, 0.5, 0.5, fourthd[0]), (-0.33, 0.33, 1, fourthd[1]), (0, -0.5, 0, fourthd[2]), (1, -0.5, 0.5, fourthd[3]), (0.33,
-                                                                                                                                        0.33, 1, fourthd[4]), (-0.33, 0.33, 0, fourthd[5]), (-1, -0.5, 0.5, fourthd[6]), (0, -0.5, 1, fourthd[7]), (0.33, 0.33, 0, fourthd[8])])
+    trefoil = np.array([(0, 1, 0.5, fourthd[0]), (-0.33, 0.33, 1, fourthd[1]), (0, -0.5, 0, fourthd[2]), (1, -0.5, 0.5, fourthd[3]), (0.33,
+                                                                                                                                      0.33, 1, fourthd[4]), (-0.33, 0.33, 0, fourthd[5]), (-1, -0.5, 0.5, fourthd[6]), (0, -0.5, 1, fourthd[7]), (0.33, 0.33, 0, fourthd[8])])
     trefoil = radius * trefoil + np.array(center)
     return bspline(trefoil, nPoints=nPoints)
 
