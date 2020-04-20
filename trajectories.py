@@ -113,7 +113,7 @@ def figureEight3D(*args, **kwargs):
     nPoints = kwargs.get('nPoints', 1000)
     radius = kwargs.get('radius', 1)
     center = kwargs.get('center', (0, 0, 0))
-    trefoil = np.array([(1, 0.5, 0.5), (-0.33, 0.66, 0), (0, 0, 1), (0.25, -0.5, 0.5), (0, -0.66, 0), (-1, 0, 0.5),
+    trefoil = np.array([(0, 1, 0.5), (-0.33, 0.66, 0), (0, 0, 1), (0.25, -0.5, 0.5), (0, -0.66, 0), (-1, 0, 0.5),
                         (-0.33, 0.66, 1), (0.33, 0.66, 0), (1, 0, 0.5), (0, -0.66, 1), (-0.25, -0.5, 0.5), (0, 0, 0), (0.33, 0.66, 1)])
     trefoil = radius * trefoil + np.array(center)
     return bspline(trefoil, nPoints=nPoints)
