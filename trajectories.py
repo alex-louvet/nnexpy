@@ -133,3 +133,7 @@ def figureEight4D(*args, **kwargs):
                                                                                                                                                                                              0.66, 1, fourthd[6]), (0.33, 0.66, 0, fourthd[7]), (1, 0, 0.5, fourthd[8]), (0, -0.66, 1, fourthd[9]), (-0.25, -0.5, 0.5, fourthd[10]), (0, 0, 0, fourthd[11]), (0.33, 0.66, 1, fourthd[12])])
     trefoil = radius * trefoil + np.array(center)
     return bspline(trefoil, nPoints=nPoints)
+
+
+def trajectory_to_graph(trajectory):
+    return 0
