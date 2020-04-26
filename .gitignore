@@ -134,3 +134,4 @@ test.py
 secret.py
 instance_*.zip
 *.ipynb
+katlas.*
