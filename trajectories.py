@@ -174,7 +174,10 @@ class knotDescriptor(object):
                             component.append((0, i))
                         else:
                             component.append((component[-1][1] + 1, i))
-        component[0] = (component[-1][1] + 1, component[1][0] - 1)
+        if (len(component) > 1):
+            component[0] = (component[-1][1] + 1, component[1][0] - 1)
+        else:
+            component = [(0, len(trajectory) - 1)]
 
         self.crossing = crossing
         self.component = component
@@ -201,6 +204,8 @@ class knotDescriptor(object):
     def determinant(self):
         import numpy as np
         import math as m
+        if (len(crossing) == 0 or len(component) == 1):
+            return 1
         matrix = np.zeros(
             (len(self.crossing), len(self.component)), dtype=int)
         for i, x in enumerate(self.crossing):
