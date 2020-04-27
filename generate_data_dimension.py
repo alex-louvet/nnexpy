@@ -102,7 +102,7 @@ class DataDescriptor(object):
                 coordinates=temp,
                 cluster=0
             ))
-        return DataInstance({'classNumber': 1, 'pointsNumber': pointsNumber, 'points': points})
+        return DataInstance({'dimension': self.dimension, 'classNumber': 1, 'pointsNumber': pointsNumber, 'points': points})
 
     def plot(self):
         import math as m
@@ -266,7 +266,7 @@ class DataInstance(object):
                 coordinates=data[i],
                 cluster=label[i]
             ))
-        return DataInstance({'classNumber': np.max(label) + 1, 'pointsNumber': len(label), 'points': points})
+        return DataInstance({'dimension': self.dimension, 'classNumber': np.max(label) + 1, 'pointsNumber': len(label), 'points': points})
 
     def predict_and_evaluate(self, model, *args, **kwargs):
         data, label = self.numpyify()
@@ -290,7 +290,7 @@ class DataInstance(object):
             if point.cluster in targetCluster and random < nPoints / self.pointsNumber:
                 pointList.append(point.coordinates)
         rips_complex = gudhi.RipsComplex(
-            points=pointList, max_edge_length=0.05)
+            points=pointList, max_edge_length=0.02)
         simplex_tree = rips_complex.create_simplex_tree(
             max_dimension=self.dimension)
         simplex_tree.persistence()
