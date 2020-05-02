@@ -5,7 +5,7 @@ class DataDescriptor(object):
         import random as r
         import math as m
         if "dimension" in kwargs and "bounds" in kwargs:
-            if (bounds.dimension != dimension):
+            if (kwargs.get('bounds').dimension != kwargs.get('dimension')):
                 raise ValueError(
                     'bounds and data must live in the same dimension')
             else:
@@ -126,7 +126,6 @@ class DataDescriptor(object):
             from mpl_toolkits import mplot3d
             import numpy as np
             import random as r
-            fig = plt.figure()
             ax = plt.axes(projection="3d")
             for k, center in enumerate(self.centerList):
                 X, Y, Z = [], [], []
@@ -136,7 +135,7 @@ class DataDescriptor(object):
                         radiusLength = (
                             radiusProp * radius[0] + (1 - radiusProp) * radius[1])
                         temp = []
-                        for i in range(len(center.coordinates)):
+                        for _ in range(len(center.coordinates)):
                             a = r.random()
                             temp.append(2 * a - 1)
                         randomVector = np.array(temp)
@@ -239,7 +238,6 @@ class DataInstance(object):
         else:
             from mpl_toolkits import mplot3d
             import numpy as np
-            fig = plt.figure()
             ax = plt.axes(projection="3d")
             for k in range(self.classNumber):
                 X = [point.coordinates[0]
@@ -272,7 +270,6 @@ class DataInstance(object):
         data, label = self.numpyify()
         label_evaluation = model.predict_classes(
             data, **kwargs)
-        points = []
         res = 0
         for i in range(len(label)):
             if label[i] == label_evaluation[i]:
@@ -280,7 +277,7 @@ class DataInstance(object):
         return res / len(label)
 
     def bettiNumbers(self, *args, **kwargs):
-        import gudhi
+        from gudhi import AlphaComplex
         import random as r
         nPoints = kwargs.get('nPoints', self.pointsNumber)
         targetCluster = kwargs.get('targetCluster', [1])
@@ -289,9 +286,8 @@ class DataInstance(object):
             random = r.random()
             if point.cluster in targetCluster and random <= nPoints / self.pointsNumber:
                 pointList.append(point.coordinates)
-        alpha_complex = gudhi.AlphaComplex(points=pointList)
-        simplex_tree = alpha_complex.create_simplex_tree(
-            max_alpha_square=0.05**2)
+        alpha_complex = AlphaComplex(points=pointList)
+        simplex_tree = alpha_complex.create_simplex_tree(0.06**2)
         simplex_tree.persistence()
         return simplex_tree.betti_numbers()
 
@@ -312,10 +308,10 @@ class DataPoint(object):
             else:
                 import random as r
                 self.dimension = kwargs.get("dimension")
-                temp = tuple([0] * self.dimension)
-                for _ in range(dimension):
+                temp = [0] * self.dimension
+                for i in range(self.dimension):
                     temp[i] = r.random()
-                self.coordinates = temp
+                self.coordinates = tuple(temp)
 
         elif "coordinates" in kwargs:
             self.coordinates = tuple(kwargs.get("coordinates"))
@@ -347,7 +343,7 @@ class Bounds(object):
                     if x['min'] >= x['max']:
                         raise ValueError(
                             'Dimension max must be strictly bigger than dimension\'s min')
-                if len(boundsCoordinates) != dimension:
+                if len(kwargs.get('boundsCoordinates')) != kwargs.get('dimension'):
                     raise ValueError(
                         'Dimension of bounds and announced dimension must be the same')
                 else:

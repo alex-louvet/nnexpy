@@ -204,7 +204,7 @@ class knotDescriptor(object):
     def determinant(self):
         import numpy as np
         import math as m
-        if (len(crossing) == 0 or len(component) == 1):
+        if (len(self.crossing) == 0 or len(self.component) == 1):
             return 1
         matrix = np.zeros(
             (len(self.crossing), len(self.component)), dtype=int)
@@ -217,5 +217,5 @@ class knotDescriptor(object):
         matrix = np.delete(matrix, 0, 1)
 
         det = int(np.round(abs(np.linalg.det(matrix))))
-        self.determinant = det
+        self.det = det
         return det
