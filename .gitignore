@@ -135,3 +135,4 @@ secret.py
 instance_*.zip
 *.ipynb
 katlas.*
+.vscode/
