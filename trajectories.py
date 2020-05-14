@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-
-
 def circular_trajectory2D(*args, **kwargs):
     import numpy as np
     nPoints = kwargs.get('nPoints', 1000)
@@ -151,8 +148,27 @@ def vectorProduct(A, B, C, D):
     return (int(A[2] == max(A[2], C[2], D[2]) or B[2] == max(B[2], C[2], D[2])) * 2 - 1) * s[2]
 
 
+# https://stackoverflow.com/questions/20677795/how-do-i-compute-the-intersection-point-of-two-lines
+def line_intersection(line1, line2):
+    xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
+    ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
+
+    def det(a, b):
+        return a[0] * b[1] - a[1] * b[0]
+
+    div = det(xdiff, ydiff)
+    if div == 0:
+        raise Exception('lines do not intersect')
+
+    d = (det(*line1), det(*line2))
+    x = det(d, xdiff) / div
+    y = det(d, ydiff) / div
+    return x, y
+
+
 def ABIsUp(A, B, C, D):
-    return A[2] == max(A[2], C[2], D[2]) or B[2] == max(B[2], C[2], D[2])
+    normX = line_intersection((A, B), (C, D))[0]/(B[0] - A[0])
+    return A[2]*normX + (1-normX)*B[2] >= C[2]*normX + (1-normX)*D[2]
 
 
 class knotDescriptor(object):
