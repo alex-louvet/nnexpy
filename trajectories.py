@@ -172,9 +172,16 @@ def ABIsUp(A, B, C, D):
 
 
 class knotDescriptor(object):
-    def __init__(self, trajectory):
+    def __init__(self, crossing, component, *args, **kwargs):
+        self.crossing = crossing
+        self.component = component
+        self.trajectory = kwargs.get('trajectory', [])
+
+    @classmethod
+    def fromTrajectory(self, trajectory):
         crossing = []
         component = []
+        self.trajectory = trajectory
         already_seen = []
         for i in range(len(trajectory) - 1):
             for j in range(len(trajectory) - 1):
@@ -195,8 +202,7 @@ class knotDescriptor(object):
         else:
             component = [(0, len(trajectory) - 1)]
 
-        self.crossing = crossing
-        self.component = component
+        return self(crossing, component, trajectory=trajectory)
 
     def findCrossingComponents(self, crossing):
         if not crossing in self.crossing:
@@ -235,3 +241,45 @@ class knotDescriptor(object):
         det = int(np.round(abs(np.linalg.det(matrix))))
         self.det = det
         return det
+
+    def plotTraj2D(self):
+        if len(self.trajectory) == 0:
+            raise ValueError("no trajectory")
+        import matplotlib.pyplot as plt
+        plt.scatter([e[0] for e in self.trajectory], [e[1]
+                                                      for e in self.trajectory], s=4, c=range(len(self.trajectory)), cmap="hsv")
+        Lcrossing = []
+        Rcrossing = []
+        for y in self.crossing:
+            if y[0] == 'r':
+                Rcrossing.append(self.trajectory[y[1]])
+            else:
+                Lcrossing.append(self.trajectory[y[1]])
+        plt.scatter([e[0] for e in Rcrossing], [e[1]
+                                                for e in Rcrossing], s=200)
+        plt.scatter([e[0] for e in Lcrossing], [e[1]
+                                                for e in Lcrossing], s=200)
+
+        plt.show()
+
+    def plotTraj3D(self):
+        if len(self.trajectory) == 0:
+            raise ValueError("no trajectory")
+        import matplotlib.pyplot as plt
+        from mpl_toolkits import mplot3d
+        ax = plt.axes(projection="3d")
+        ax.scatter3D([e[0] for e in self.trajectory], [e[1]
+                                                       for e in self.trajectory], [e[2] for e in self.trajectory], s=4, c=range(len(self.trajectory)), cmap="hsv")
+        Lcrossing = []
+        Rcrossing = []
+        for y in self.crossing:
+            if y[0] == 'r':
+                Rcrossing.append(self.trajectory[y[1]])
+            else:
+                Lcrossing.append(self.trajectory[y[1]])
+        ax.scatter3D([e[0] for e in Rcrossing], [e[1]
+                                                 for e in Rcrossing], [e[2] for e in Rcrossing], s=200)
+        ax.scatter3D([e[0] for e in Lcrossing], [e[1]
+                                                 for e in Lcrossing], [e[2] for e in Lcrossing], s=200)
+
+        plt.show()
