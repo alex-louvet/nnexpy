@@ -93,5 +93,5 @@ for traj in trajList:
                                     pickle.HIGHEST_PROTOCOL)
                         pickle.dump(desc.crossing, output,
                                     pickle.HIGHEST_PROTOCOL)
-                        pickle.dump(desc.determinant, output,
+                        pickle.dump(determinant, output,
                                     pickle.HIGHEST_PROTOCOL)
