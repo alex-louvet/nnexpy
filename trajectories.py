@@ -182,23 +182,31 @@ class knotDescriptor(object):
         crossing = []
         component = []
         self.trajectory = trajectory
-        already_seen = []
         for i in range(len(trajectory) - 1):
-            for j in range(len(trajectory) - 1):
+            for j in range(i+1, len(trajectory) - 1):
                 if intersect(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]) and abs(i - j) > 2 and not (i == 0 and j == len(trajectory) - 2 or i == len(trajectory) - 2 and j == 0):
-                    if vectorProduct(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]) > 0 and not (i, j) in already_seen and not (j, i) in already_seen:
-                        crossing.append(('r', i, j))
-                        already_seen.append((i, j))
-                    elif vectorProduct(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]) < 0 and not (i, j) in already_seen and not (j, i) in already_seen:
-                        crossing.append(('l', i, j))
-                        already_seen.append((i, j))
-                    if not ABIsUp(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]):
-                        if len(component) == 0:
-                            component.append((0, i))
+                    if vectorProduct(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]) > 0:
+                        if not ABIsUp(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]):
+                            crossing.append(('r', i, j, 'u'))
                         else:
-                            component.append((component[-1][1] + 1, i))
+                            crossing.append(('r', i, j, 'a'))
+                    elif vectorProduct(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]) < 0:
+                        if not ABIsUp(trajectory[i + 1], trajectory[i], trajectory[j + 1], trajectory[j]):
+                            crossing.append(('l', i, j, 'u'))
+                        else:
+                            crossing.append(('l', i, j, 'a'))
+        componentList = []
+        for x in crossing:
+            if (x[3] == 'a'):
+                componentList.append(x[2])
+            else:
+                componentList.append(x[1])
+        componentList.sort()
+        print(componentList)
+        for i in range(len(componentList) - 1):
+            component.append((componentList[i] + 1, componentList[i+1]))
         if (len(component) > 1):
-            component[0] = (component[-1][1] + 1, component[1][0] - 1)
+            component.append((componentList[-1] + 1, componentList[0]))
         else:
             component = [(0, len(trajectory) - 1)]
 
@@ -208,7 +216,7 @@ class knotDescriptor(object):
         if not crossing in self.crossing:
             raise valueError(
                 "crossing must be one of the crossings of the knot")
-        c1 = 0
+        c1 = len(self.component) - 1
         c2 = 0
         c3 = 0
         for i, x in enumerate(self.component):
@@ -227,6 +235,7 @@ class knotDescriptor(object):
         import numpy as np
         import math as m
         if (len(self.crossing) == 0 or len(self.component) == 1):
+            self.det = 1
             return 1
         matrix = np.zeros(
             (len(self.crossing), len(self.component)), dtype=int)
@@ -235,12 +244,13 @@ class knotDescriptor(object):
             matrix[i][c1] = 2
             matrix[i][c2] = -1
             matrix[i][c3] = -1
+        print(matrix)
         matrix = np.delete(matrix, 0, 0)
         matrix = np.delete(matrix, 0, 1)
 
-        det = int(np.round(abs(np.linalg.det(matrix))))
-        self.det = det
-        return det
+        res = int(np.round(abs(np.linalg.det(matrix))))
+        self.det = res
+        return res
 
     def plotTraj2D(self):
         if len(self.trajectory) == 0:
