@@ -112,6 +112,7 @@ class DataDescriptor(object):
             raise ValueError(
                 'No display possible for dimension higher than 3')
         elif self.dimension == 2:
+            plt.clf()
             for k, center in enumerate(self.centerList):
                 for radius in self.radiusList[k]:
                     X = [center.coordinates[0] + (r.random() * (radius[0] - radius[1]) + radius[1]) *
@@ -226,6 +227,7 @@ class DataInstance(object):
             raise ValueError(
                 'No display possible for dimension higher than 3')
         elif self.dimension == 2:
+            plt.close()
             for k in range(self.classNumber):
                 X = [point.coordinates[0]
                      for point in self.points if point.cluster == k]
@@ -277,19 +279,87 @@ class DataInstance(object):
         return res / len(label)
 
     def bettiNumbers(self, *args, **kwargs):
-        from gudhi import AlphaComplex
+        from gudhi import RipsComplex
         import random as r
         nPoints = kwargs.get('nPoints', self.pointsNumber)
         targetCluster = kwargs.get('targetCluster', [1])
+        maxEdge = kwargs.get('maxEdge', 10)
+        maxDim = kwargs.get('maxDim', self.dimension)
         pointList = []
         for point in self.points:
             random = r.random()
             if point.cluster in targetCluster and random <= nPoints / self.pointsNumber:
                 pointList.append(point.coordinates)
-        alpha_complex = AlphaComplex(points=pointList)
-        simplex_tree = alpha_complex.create_simplex_tree(0.06**2)
-        simplex_tree.persistence()
-        return simplex_tree.betti_numbers()
+        print('random choice')
+        point_complex = RipsComplex(max_edge_length=maxEdge, points=pointList)
+        print('rips complex')
+        simplex_tree = point_complex.create_simplex_tree(
+            max_dimension=maxDim)
+        print('simplex tree')
+        persistence = simplex_tree.persistence(
+            min_persistence=0.01)
+        print(persistence)
+        return simplex_tree.persistent_betti_numbers(from_value=0.05, to_value=0.05)
+
+    def newBettiNumbers(self, *args, **kwargs):
+        from networkx import Graph, connected_components, number_connected_components
+        import numpy as np
+        import random as r
+        targetCluster = kwargs.get('targetCluster', [1])
+        threshold = kwargs.get('threshold', 0.05)
+        nPoints = kwargs.get('nPoints', self.pointsNumber)
+        # Build graph
+        G = Graph()
+        pointList = []
+        for point in self.points:
+            random = r.random()
+            if point.cluster in targetCluster and random <= nPoints / self.pointsNumber:
+                pointList.append(np.array(point.coordinates))
+
+        n = len(pointList)//100
+        nodes = [i for i in range(len(pointList))]
+        edges = []
+        for i in range(len(pointList)):
+            if i % 100 == 0:
+                print(str(i//100) + " / " + str(n))
+            for j in range(i+1, len(pointList)):
+                dist = np.sqrt(
+                    np.sum((pointList[i] - pointList[j])**2))
+                if dist <= threshold:
+                    edges.append((i, j))
+        G.add_nodes_from(nodes)
+        G.add_edges_from(edges)
+        conComp = connected_components(G)
+        conCompNumber = number_connected_components(G)
+        centers = []
+        coordChange = []
+        ball = [False for _ in range(conCompNumber)]
+        for e, z in enumerate(conComp):
+            x = list(z)
+            origin = pointList[x[0]]
+            temp = [0 for _ in range(len(origin))]
+            coord = [0 for _ in pointList[x[0]]]
+            for k in range(len(x)):
+                temp += pointList[x[k]]
+                for i, y in enumerate(pointList[x[k]]):
+                    if y != origin[i]:
+                        coord[i] == 1
+
+            temp /= len(x)
+            centers.append(temp)
+            coordChange.append(sum(coord) - 1)
+            for pt in x:
+                dist = np.sqrt(
+                    np.sum((pointList[pt] - centers[e])**2))
+                if dist <= threshold:
+                    ball[e] = True
+        betti = [0 for _ in range(self.dimension)]
+        for i in range(len(centers)):
+            if ball[i] != 0:
+                betti[coordChange[i]] += 1
+            else:
+                betti[0] += 1
+        return betti
 
 
 class DataPoint(object):
