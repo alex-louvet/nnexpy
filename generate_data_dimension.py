@@ -305,6 +305,7 @@ class DataInstance(object):
         from networkx import Graph, connected_components, number_connected_components
         import numpy as np
         import random as r
+        from utils import findPointStructDimension
         targetCluster = kwargs.get('targetCluster', [1])
         threshold = kwargs.get('threshold', 0.05)
         nPoints = kwargs.get('nPoints', self.pointsNumber)
@@ -332,22 +333,18 @@ class DataInstance(object):
         conComp = connected_components(G)
         conCompNumber = number_connected_components(G)
         centers = []
-        coordChange = []
+        compDim = []
         ball = [False for _ in range(conCompNumber)]
         for e, z in enumerate(conComp):
             x = list(z)
             origin = pointList[x[0]]
             temp = [0 for _ in range(len(origin))]
-            coord = [0 for _ in pointList[x[0]]]
             for k in range(len(x)):
                 temp += pointList[x[k]]
-                for i, y in enumerate(pointList[x[k]]):
-                    if y != origin[i]:
-                        coord[i] == 1
 
             temp /= len(x)
+            compDim.append(findPointStructDimension([pointList[e] for e in x]))
             centers.append(temp)
-            coordChange.append(sum(coord) - 1)
             for pt in x:
                 dist = np.sqrt(
                     np.sum((pointList[pt] - centers[e])**2))
@@ -356,7 +353,7 @@ class DataInstance(object):
         betti = [0 for _ in range(self.dimension)]
         for i in range(len(centers)):
             if ball[i] != 0:
-                betti[coordChange[i]] += 1
+                betti[compDim[i]] += 1
             else:
                 betti[0] += 1
         return betti
