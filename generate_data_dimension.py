@@ -34,6 +34,10 @@ class DataDescriptor(object):
         nHoles = kwargs.get('nHoles', None)
         maxRadius = min([x['max'] - x['min']
                          for x in self.bounds.boundsCoordinates])
+
+        self.holeDimension = kwargs.get(
+            'holeDimension', [self.dimension] * nHoles)
+
         if random:
             r.seed(random)
         if not centerList and not nHoles and not radiusList:
@@ -42,6 +46,13 @@ class DataDescriptor(object):
         if centerList and nHoles and nHoles != len(centerList):
             raise ValueError(
                 "nHoles must be equal to the length of centerList")
+        if nHoles != len(self.holeDimension):
+            raise ValueError(
+                "hole dimensions must be given for no or all holes")
+        for x in self.holeDimension:
+            if x > self.dimension:
+                raise ValueError(
+                    'a sphere dimension can not be greater than the dimension of the space')
 
         if not nHoles:
             if radiusList:
@@ -176,6 +187,13 @@ class DataDescriptor(object):
             for i in range(len(pointDistribution)):
                 center = np.array(self.centerList[i *
                                                   (classNumber - 1) + (classIndex - 1)].coordinates)
+                temp = [i for i in range(self.dimension)]
+                dimHole = [False for _ in range(self.dimension)]
+                for _ in range(self.dimension - self.holeDimension[i]):
+                    random = r.randint(0, len(temp) - 1)
+                    a = temp.pop(random)
+                    dimHole[a] = True
+
                 radius = self.radiusList[i *
                                          (classNumber - 1) + (classIndex - 1)]
                 for _ in range(int(pointDistribution[i])):
@@ -185,8 +203,11 @@ class DataDescriptor(object):
                         radiusProp * stratum[0] + (1 - radiusProp) * stratum[1])
                     temp = []
                     for i in range(len(center)):
-                        a = r.random()
-                        temp.append(2 * a - 1)
+                        if not dimHole[i]:
+                            a = r.random()
+                            temp.append(2 * a - 1)
+                        else:
+                            temp.append(0)
                     randomVector = np.array(temp)
                     randomVector = (
                         radiusLength / np.sqrt(np.sum(randomVector ** 2))) * randomVector
