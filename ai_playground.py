@@ -11,6 +11,18 @@ import shutil
 randomSeed = 468643654
 
 dataDescriptorList = [
+    DataDescriptor(dimension=2, nHoles=2, centerList=[DataPoint(coordinates=(0.24, 0.25)), DataPoint(
+        coordinates=(0.75, 0.75))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[2, 1]),
+
+    DataDescriptor(dimension=2, nHoles=2, centerList=[DataPoint(coordinates=(0.24, 0.25)), DataPoint(
+        coordinates=(0.74, 0.75))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[2, 2]),
+
+    DataDescriptor(dimension=2, nHoles=1, centerList=[DataPoint(coordinates=(
+        0.51, 0.49))], radiusList=[[(0.1, 0.13)]], holeDimension=[2]),
+
+    DataDescriptor(dimension=2, nHoles=1, centerList=[DataPoint(coordinates=(
+        0.51, 0.49))], radiusList=[[(0.1, 0.13)]], holeDimension=[1]),
+
     DataDescriptor(dimension=3, nHoles=2, centerList=[DataPoint(coordinates=(0.25, 0.24, 0.25)), DataPoint(
         coordinates=(0.74, 0.75, 0.75))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[3, 2]),
 
