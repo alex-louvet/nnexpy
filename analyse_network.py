@@ -1,57 +1,118 @@
 from tensorflow import keras
-from utils import *
+from trajectories import *
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from mpl_toolkits import mplot3d
+import pickle
+from generate_data_dimension import *
 
-mypath = "./models/test/"
-if not os.path.exists(mypath + "figure"):
-    os.makedirs(mypath + "figure")
+for k in range(3):
+    mypath_init = "./models/3d4d_2500_15_training/instance_" + str(k) + "/"
 
-for file in os.listdir(mypath):
-    if file.endswith(".h5"):
-        modelPath = os.path.join(mypath, file)
+    with open(mypath_init + 'data_descriptor.pkl', 'rb') as input:
+        centerList = pickle.load(input)
+        radiusList = pickle.load(input)
+        bounds = pickle.load(input)
+        randomSeed = pickle.load(input)
 
-        trajectory = circular_trajectory(nPoints=50000)
+    dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
+                                    radiusList=radiusList, bounds=bounds)
 
-        model = keras.models.load_model(modelPath)
+    instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
+    data_betti = instance.bettiNumbers()
+    test = dataDescriptor.generateTestData(pointsNumber=50000)
+    print(data_betti)
 
-        print(model.summary())
+    for trainingnumb in range(15):
+        mypath = mypath_init + "training_" + str(trainingnumb) + "/"
+        if not os.path.exists(mypath + "figure"):
+            os.makedirs(mypath + "figure")
+        if not os.path.exists(mypath + "pca"):
+            os.makedirs(mypath + "pca")
 
-        layersWeights = []
-        layersBias = []
+        for file in os.listdir(mypath):
+            if file.endswith(".h5") and not file.startswith('16'):
+                modelPath = os.path.join(mypath, file)
 
-        for layer in model.layers:
-            temp = layer.get_weights()
-            layersWeights.append(temp[0])
-            layersBias.append(temp[1])
+                if (k < 2):
+                    trajectory = figureEight3D(nPoints=5000)
+                    trajectory = [(trajectory[0][i], trajectory[1][i], trajectory[2][i])
+                                  for i in range(len(trajectory[0]))]
+                else:
+                    trajectory = figureEight4D(nPoints=5000)
+                    trajectory = [(trajectory[0][i], trajectory[1][i], trajectory[2]
+                                   [i], trajectory[3][i]) for i in range(len(trajectory[0]))]
 
-        res = []
-        for _ in range(len(layersWeights) - 1):
-            res.append([])
+                model = keras.models.load_model(modelPath)
+                print(modelPath)
+                predictedTest = test.predict(model, verbose=1)
+                modelBetti = predictedTest.bettiNumbers()
+                print(modelBetti)
 
-        for x in trajectory:
-            init = x
-            for i in range(len(layersWeights) - 1):
-                next = tanh(
-                    np.dot(np.transpose(layersWeights[i]), init) + layersBias[i])
-                res[i].append(next)
-                init = next
+                layersWeights = []
+                layersBias = []
 
-        pcaRes = []
-        for _ in range(len(layersWeights) - 1):
-            pcaRes.append([])
+                for layer in model.layers:
+                    temp = layer.get_weights()
+                    layersWeights.append(temp[0])
+                    layersBias.append(temp[1])
 
-        for i in range(len(res)):
-            pca = PCA(n_components=len(layersWeights[0]))
-            principalComponents = pca.fit_transform(res[i])
-            pcaRes[i] = principalComponents
+                res = []
+                for _ in range(len(layersWeights) - 1):
+                    res.append([])
 
-        for i, x in enumerate(pcaRes):
-            plt.scatter([e[0] for e in x], [e[1]
-                                            for e in x], c=range(len(x)), cmap="hsv", s=4)
+                for x in trajectory:
+                    init = x
+                    for i in range(len(layersWeights) - 1):
+                        next = tanh(
+                            np.dot(np.transpose(layersWeights[i]), init) + layersBias[i])
+                        res[i].append(next)
+                        init = next
 
-            plt.savefig(mypath + "figure/" + 'pca_' +
-                        str(len(pcaRes) - 1) + "_" + str(i) + '_layer')
-            plt.clf()
+                pcaRes = []
+                for _ in range(len(layersWeights) - 1):
+                    pcaRes.append([])
+
+                for i in range(len(res)):
+                    pca = PCA(n_components=3)
+                    principalComponents = pca.fit_transform(res[i])
+                    pcaRes[i] = principalComponents
+
+                for i, x in enumerate(pcaRes):
+                    desc = knotDescriptor(x)
+                    determinant = desc.determinant()
+                    print(determinant)
+                    """
+                    information = {'trajectory': 'figureEight',
+                                   'layerNumber': len(pcaRes) - 1, 'layerIndex': i}
+
+                    with open(mypath + 'pca/' + 'figureEight' +
+                              str(len(pcaRes) - 1) + "_" + str(i) + '_layer.pkl', 'wb') as output:
+                        pickle.dump(information, output,
+                                    pickle.HIGHEST_PROTOCOL)
+                        pickle.dump(x, output,
+                                    pickle.HIGHEST_PROTOCOL)
+                        pickle.dump(desc.component, output,
+                                    pickle.HIGHEST_PROTOCOL)
+                        pickle.dump(desc.crossing, output,
+                                    pickle.HIGHEST_PROTOCOL)
+                        pickle.dump(desc.determinant, output,
+                                    pickle.HIGHEST_PROTOCOL)
+                        pickle.dump(data_betti, output,
+                                    pickle.HIGHEST_PROTOCOL)
+                        pickle.dump(modelBetti, output,
+                                    pickle.HIGHEST_PROTOCOL)
+"""
+                    """
+                    fig = plt.figure()
+                    ax = plt.axes(projection="3d")
+                    ax.scatter3D([e[0] for e in x], [e[1]
+                                                     for e in x], [e[2] for e in x], c=range(len(x)), cmap="hsv", s=4)
+
+                    fig.savefig(mypath + "figure/" + 'figureEight' +
+                                str(len(pcaRes) - 1) + "_" + str(i) + '_layer')
+                    fig.clf()
+                    plt.close(fig)
+                    """
