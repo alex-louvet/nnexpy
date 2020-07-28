@@ -7,19 +7,33 @@ import pickle
 import os
 import sys
 import shutil
-from send_results import *
 
 randomSeed = 468643654
 
 dataDescriptorList = [
-    DataDescriptor(dimension=3, nHoles=2, centerList=[DataPoint(coordinates=(0.08, 0.11, 0.12)), DataPoint(
-        coordinates=(0.7, 0.72, 0.75))], radiusList=[[(0, 0.08), (0.15, 0.17)], [(0.05, 0.15)]]),
-    DataDescriptor(dimension=3, nHoles=3, centerList=[DataPoint(coordinates=(0.08, 0.11, 0.12)), DataPoint(coordinates=(
-        0.7, 0.72, 0.75)), DataPoint(coordinates=(0.1, 0.72, 0.75))], radiusList=[[(0, 0.08), (0.15, 0.17)], [(0.05, 0.15)], [(0, 0.07)]]),
-    DataDescriptor(dimension=4, nHoles=2, centerList=[DataPoint(coordinates=(0.08, 0.11, 0.12, 0.09)), DataPoint(
-        coordinates=(0.7, 0.72, 0.75, 0.71))], radiusList=[[(0, 0.08), (0.15, 0.17)], [(0.05, 0.15)]]),
-    DataDescriptor(dimension=4, nHoles=3, centerList=[DataPoint(coordinates=(0.08, 0.11, 0.12, 0.09)), DataPoint(coordinates=(
-        0.7, 0.72, 0.75, 0.71)), DataPoint(coordinates=(0.1, 0.72, 0.75, 0.09))], radiusList=[[(0, 0.08), (0.15, 0.17)], [(0.05, 0.15)], [(0, 0.07)]])
+    DataDescriptor(dimension=3, nHoles=2, centerList=[DataPoint(coordinates=(0.25, 0.24, 0.25)), DataPoint(
+        coordinates=(0.74, 0.75, 0.75))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[3, 2]),
+
+    DataDescriptor(dimension=3, nHoles=2, centerList=[DataPoint(coordinates=(0.25, 0.24, 0.25)), DataPoint(
+        coordinates=(0.74, 0.75, 0.75))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[3, 3]),
+
+    DataDescriptor(dimension=3, nHoles=1, centerList=[DataPoint(coordinates=(
+        0.51, 0.49, 0.5))], radiusList=[[(0.1, 0.13)]], holeDimension=[3]),
+
+    DataDescriptor(dimension=3, nHoles=1, centerList=[DataPoint(coordinates=(
+        0.51, 0.49, 0.5))], radiusList=[[(0.1, 0.13)]], holeDimension=[2]),
+
+    DataDescriptor(dimension=4, nHoles=2, centerList=[DataPoint(coordinates=(0.25, 0.24, 0.25, 0.26)), DataPoint(
+        coordinates=(0.74, 0.75, 0.75, 0.76))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[4, 3]),
+
+    DataDescriptor(dimension=4, nHoles=2, centerList=[DataPoint(coordinates=(0.25, 0.24, 0.25, 0.26)), DataPoint(
+        coordinates=(0.74, 0.75, 0.75, 0.76))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[4, 4]),
+
+    DataDescriptor(dimension=4, nHoles=1, centerList=[DataPoint(coordinates=(
+        0.51, 0.49, 0.5, 0.5))], radiusList=[[(0.1, 0.13)]], holeDimension=[4]),
+
+    DataDescriptor(dimension=4, nHoles=1, centerList=[DataPoint(coordinates=(
+        0.51, 0.49, 0.5, 0.5))], radiusList=[[(0.1, 0.13)]], holeDimension=[3]),
 ]
 
 iterNum = 1
@@ -83,8 +97,20 @@ for j, x in enumerate(dataDescriptorList):
         model4 = build_model(depth=4, input_shape=input_shape, width=8,
                              output_dimension=2, activation='relu')
 
+        model6 = build_model(depth=6, input_shape=input_shape, width=8,
+                             output_dimension=2, activation='relu')
+
         model8 = build_model(depth=8, input_shape=input_shape, width=8,
                              output_dimension=2, activation='relu')
+
+        model10 = build_model(depth=10, input_shape=input_shape, width=8,
+                              output_dimension=2, activation='relu')
+
+        model12 = build_model(depth=12, input_shape=input_shape, width=8,
+                              output_dimension=2, activation='relu')
+
+        model14 = build_model(depth=14, input_shape=input_shape, width=8,
+                              output_dimension=2, activation='relu')
 
         model16 = build_model(depth=16, input_shape=input_shape, width=8,
                               output_dimension=2, activation='relu')
@@ -105,15 +131,31 @@ for j, x in enumerate(dataDescriptorList):
                        label=label, save_path=mypath + '4layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
         csv_logger = keras.callbacks.CSVLogger(
+            mypath + '6layers.csv', separator=',', append=False)
+        train_and_save(model=model6, epoch_number=epoch_number, data=data,
+                       label=label, save_path=mypath + '6layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+
+        csv_logger = keras.callbacks.CSVLogger(
             mypath + '8layers.csv', separator=',', append=False)
         train_and_save(model=model8, epoch_number=epoch_number, data=data,
                        label=label, save_path=mypath + '8layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
 
         csv_logger = keras.callbacks.CSVLogger(
+            mypath + '10layers.csv', separator=',', append=False)
+        train_and_save(model=model10, epoch_number=epoch_number, data=data,
+                       label=label, save_path=mypath + '10layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+
+        csv_logger = keras.callbacks.CSVLogger(
+            mypath + '12layers.csv', separator=',', append=False)
+        train_and_save(model=model12, epoch_number=epoch_number, data=data,
+                       label=label, save_path=mypath + '12layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+
+        csv_logger = keras.callbacks.CSVLogger(
+            mypath + '14layers.csv', separator=',', append=False)
+        train_and_save(model=model14, epoch_number=epoch_number, data=data,
+                       label=label, save_path=mypath + '14layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+
+        csv_logger = keras.callbacks.CSVLogger(
             mypath + '16layers.csv', separator=',', append=False)
         train_and_save(model=model8, epoch_number=epoch_number, data=data,
                        label=label, save_path=mypath + '16layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
-
-    shutil.make_archive("instance_" + str(j), 'zip', myRootPath)
-    sendEmail(["training " + str(j) + " job is over, archive in attachement",
-               "./instance_" + str(j) + ".zip"], "training " + str(j) + " job is over")
