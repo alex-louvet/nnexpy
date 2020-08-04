@@ -7,6 +7,7 @@ import pickle
 import os
 import sys
 import shutil
+import gc
 
 randomSeed = 468643654
 
@@ -107,3 +108,4 @@ for j, x in enumerate(dataDescriptorList):
                 mypath + str(i) + 'layer.csv', separator=',', append=False)
             train_and_save(model=model, epoch_number=epoch_number, data=data, label=label, save_path=mypath +
                            str(i) + 'layer.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+            gc.collect()
