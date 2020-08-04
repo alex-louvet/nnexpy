@@ -4,7 +4,6 @@ def build_model(*args, **kwargs):
     depth = kwargs.get('depth', 1)
     input_shape = kwargs.get('input_shape', (2,))
     width = kwargs.get('width', 8)
-    output_dimension = kwargs.get('output_dimension', 2)
     activation = kwargs.get('activation', 'relu')
 
     model = keras.Sequential()
