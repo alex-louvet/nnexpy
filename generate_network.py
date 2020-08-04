@@ -1,23 +1,24 @@
 def build_model(*args, **kwargs):
-    from tensorflow import keras
+    import tensorflow as tf
 
     depth = kwargs.get('depth', 1)
     input_shape = kwargs.get('input_shape', (2,))
     width = kwargs.get('width', 8)
     activation = kwargs.get('activation', 'relu')
 
-    model = keras.Sequential()
+    model = tf.keras.Sequential()
 
-    model.add(keras.layers.Dense(8, input_dim=input_shape[0], activation=activation,
-                                 kernel_initializer='he_uniform'))
+    model.add(tf.keras.layers.Dense(8, input_dim=input_shape[0], activation=activation,
+                                    kernel_initializer='he_uniform'))
     for _ in range(depth):
-        model.add(keras.layers.Dense(8, activation=activation))
-    model.add(keras.layers.Dense(1, activation='sigmoid'))
+        model.add(tf.keras.layers.Dense(8, activation=activation))
+    model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
     return model
 
 
 def train_and_save(*args, **kwargs):
-    from tensorflow import keras
+    import tensorflow as tf
+    tf.compat.v1.disable_eager_execution()
 
     model = kwargs.get('model', None)
     epoch_number = kwargs.get('epoch_number', 100)
@@ -34,3 +35,23 @@ def train_and_save(*args, **kwargs):
     model.fit(data, label, validation_split=0.2, batch_size=batch_size,
               epochs=epoch_number, shuffle=True, verbose=2, callbacks=callbacks)
     model.save(save_path)
+    import gc
+    del model
+    gc.collect()
+    tf.keras.backend.clear_session()
+    tf.compat.v1.reset_default_graph()
+
+
+def full_net_combined(i, input_shape, mypath, epoch_number, data, label):
+    import tensorflow as tf
+    model = build_model(
+        depth=i, input_shape=input_shape, width=8, activation='relu')
+    csv = tf.keras.callbacks.CSVLogger(
+        mypath + str(i) + 'layer.csv', separator=',', append=False)
+    train_and_save(model=model, epoch_number=epoch_number, data=data, label=label, save_path=mypath +
+                   str(i) + 'layer.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv])
+    import gc
+    del model
+    gc.collect()
+    tf.keras.backend.clear_session()
+    tf.compat.v1.reset_default_graph()

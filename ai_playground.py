@@ -1,13 +1,13 @@
+import shutil
+import sys
+import os
+import pickle
+from sklearn.utils import shuffle
 from generate_data_dimension import *
 import numpy as np
-from tensorflow import keras
-from sklearn.utils import shuffle
-from generate_network import *
-import pickle
-import os
-import sys
-import shutil
 import gc
+import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
 
 randomSeed = 468643654
 
@@ -102,10 +102,24 @@ for j, x in enumerate(dataDescriptorList):
                     os.remove(os.path.join(root, file))
 
         for i in [1, 2, 4, 6, 8, 10, 12, 14, 16]:
-            model = build_model(depth=i, input_shape=input_shape,
-                                width=8, activation='relu')
-            csv_logger = keras.callbacks.CSVLogger(
+
+            model = tf.keras.Sequential()
+            model.add(tf.keras.layers.Dense(
+                8, input_dim=input_shape[0], activation='relu', kernel_initializer='he_uniform'))
+            for _ in range(i):
+                model.add(tf.keras.layers.Dense(8, activation='relu'))
+            model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
+
+            csv = tf.keras.callbacks.CSVLogger(
                 mypath + str(i) + 'layer.csv', separator=',', append=False)
-            train_and_save(model=model, epoch_number=epoch_number, data=data, label=label, save_path=mypath +
-                           str(i) + 'layer.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+            model.summary()
+            model.compile(optimizer="adam",
+                          loss='binary_crossentropy', metrics=['accuracy'])
+            model.fit(data, label, validation_split=0.2, batch_size=64,
+                      epochs=epoch_number, shuffle=True, verbose=2, callbacks=[csv])
+            model.save(mypath + str(i) + 'layer.h5')
+            del model
+            del csv
             gc.collect()
+            tf.keras.backend.clear_session()
+            tf.compat.v1.reset_default_graph()
