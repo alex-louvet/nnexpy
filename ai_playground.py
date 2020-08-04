@@ -100,74 +100,10 @@ for j, x in enumerate(dataDescriptorList):
                 for file in files:
                     os.remove(os.path.join(root, file))
 
-        model1 = build_model(depth=1, input_shape=input_shape, width=8,
-                             output_dimension=2, activation='relu')
-
-        model2 = build_model(depth=2, input_shape=input_shape, width=8,
-                             output_dimension=2, activation='relu')
-
-        model4 = build_model(depth=4, input_shape=input_shape, width=8,
-                             output_dimension=2, activation='relu')
-
-        model6 = build_model(depth=6, input_shape=input_shape, width=8,
-                             output_dimension=2, activation='relu')
-
-        model8 = build_model(depth=8, input_shape=input_shape, width=8,
-                             output_dimension=2, activation='relu')
-
-        model10 = build_model(depth=10, input_shape=input_shape, width=8,
-                              output_dimension=2, activation='relu')
-
-        model12 = build_model(depth=12, input_shape=input_shape, width=8,
-                              output_dimension=2, activation='relu')
-
-        model14 = build_model(depth=14, input_shape=input_shape, width=8,
-                              output_dimension=2, activation='relu')
-
-        model16 = build_model(depth=16, input_shape=input_shape, width=8,
-                              output_dimension=2, activation='relu')
-
-        csv_logger = keras.callbacks.CSVLogger(
-            mypath + '1layer.csv', separator=',', append=False)
-        train_and_save(model=model1, epoch_number=epoch_number, data=data,
-                       label=label, save_path=mypath + '1layer.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
-
-        csv_logger = keras.callbacks.CSVLogger(
-            mypath + '2layers.csv', separator=',', append=False)
-        train_and_save(model=model2, epoch_number=epoch_number, data=data,
-                       label=label, save_path=mypath + '2layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
-
-        csv_logger = keras.callbacks.CSVLogger(
-            mypath + '4layers.csv', separator=',', append=False)
-        train_and_save(model=model4, epoch_number=epoch_number, data=data,
-                       label=label, save_path=mypath + '4layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
-
-        csv_logger = keras.callbacks.CSVLogger(
-            mypath + '6layers.csv', separator=',', append=False)
-        train_and_save(model=model6, epoch_number=epoch_number, data=data,
-                       label=label, save_path=mypath + '6layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
-
-        csv_logger = keras.callbacks.CSVLogger(
-            mypath + '8layers.csv', separator=',', append=False)
-        train_and_save(model=model8, epoch_number=epoch_number, data=data,
-                       label=label, save_path=mypath + '8layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
-
-        csv_logger = keras.callbacks.CSVLogger(
-            mypath + '10layers.csv', separator=',', append=False)
-        train_and_save(model=model10, epoch_number=epoch_number, data=data,
-                       label=label, save_path=mypath + '10layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
-
-        csv_logger = keras.callbacks.CSVLogger(
-            mypath + '12layers.csv', separator=',', append=False)
-        train_and_save(model=model12, epoch_number=epoch_number, data=data,
-                       label=label, save_path=mypath + '12layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
-
-        csv_logger = keras.callbacks.CSVLogger(
-            mypath + '14layers.csv', separator=',', append=False)
-        train_and_save(model=model14, epoch_number=epoch_number, data=data,
-                       label=label, save_path=mypath + '14layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
-
-        csv_logger = keras.callbacks.CSVLogger(
-            mypath + '16layers.csv', separator=',', append=False)
-        train_and_save(model=model8, epoch_number=epoch_number, data=data,
-                       label=label, save_path=mypath + '16layers.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
+        for i in [1, 2, 4, 6, 8, 10, 12, 14, 16]:
+            model = build_model(depth=i, input_shape=input_shape,
+                                width=8, activation='relu')
+            csv_logger = keras.callbacks.CSVLogger(
+                mypath + str(i) + 'layer.csv', separator=',', append=False)
+            train_and_save(model=model, epoch_number=epoch_number, data=data, label=label, save_path=mypath +
+                           str(i) + 'layer.h5', batch_size=64, loss="binary_crossentropy", callbacks=[csv_logger])
