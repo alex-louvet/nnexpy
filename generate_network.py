@@ -44,6 +44,7 @@ def train_and_save(*args, **kwargs):
 
 def full_net_combined(i, input_shape, mypath, epoch_number, data, label):
     import tensorflow as tf
+    tf.compat.v1.disable_eager_execution()
     model = build_model(
         depth=i, input_shape=input_shape, width=8, activation='relu')
     csv = tf.keras.callbacks.CSVLogger(

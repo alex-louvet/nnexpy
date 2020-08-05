@@ -3,11 +3,10 @@ import sys
 import os
 import pickle
 from sklearn.utils import shuffle
-from generate_data_dimension import *
+from generate_data_dimension import DataDescriptor, DataPoint, DataInstance
 import numpy as np
-import gc
-import tensorflow as tf
-tf.compat.v1.disable_eager_execution()
+import subprocess
+import json
 
 randomSeed = 468643654
 
@@ -102,24 +101,11 @@ for j, x in enumerate(dataDescriptorList):
                     os.remove(os.path.join(root, file))
 
         for i in [1, 2, 4, 6, 8, 10, 12, 14, 16]:
+            with open('/tmp/data_file.pkl', 'wb') as dump:
+                pickle.dump(data, dump, pickle.HIGHEST_PROTOCOL)
 
-            model = tf.keras.Sequential()
-            model.add(tf.keras.layers.Dense(
-                8, input_dim=input_shape[0], activation='relu', kernel_initializer='he_uniform'))
-            for _ in range(i):
-                model.add(tf.keras.layers.Dense(8, activation='relu'))
-            model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
+            with open('/tmp/label_file.pkl', 'wb') as dump:
+                pickle.dump(label, dump, pickle.HIGHEST_PROTOCOL)
 
-            csv = tf.keras.callbacks.CSVLogger(
-                mypath + str(i) + 'layer.csv', separator=',', append=False)
-            model.summary()
-            model.compile(optimizer="adam",
-                          loss='binary_crossentropy', metrics=['accuracy'])
-            model.fit(data, label, validation_split=0.2, batch_size=64,
-                      epochs=epoch_number, shuffle=True, verbose=2, callbacks=[csv])
-            model.save(mypath + str(i) + 'layer.h5')
-            del model
-            del csv
-            gc.collect()
-            tf.keras.backend.clear_session()
-            tf.compat.v1.reset_default_graph()
+            subprocess.call(['python3', 'rasScript.py', str(i), str(input_shape[0]),
+                             str(mypath), str(epoch_number), '/tmp/data_file.pkl', '/tmp/label_file.pkl'])
