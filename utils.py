@@ -2,17 +2,11 @@ import random as r
 
 
 def independent(x, S):
-    import sympy as sp
-    mat = []
-    for i in range(len(S[0])):
-        temp = []
-        for j in range(len(S)):
-            temp.append(S[j][i])
-        temp.append(x[i])
-        mat.append(temp)
-    mat = sp.Matrix(mat)
-    res = mat.columnspace()
-    return len(res) == len(S) + 1
+    import numpy as np
+    mat = S.copy()
+    mat.append(x)
+    rank = np.linalg.matrix_rank(mat)
+    return rank == len(mat[0])
 
 
 def findPointStructDimension(pointList):

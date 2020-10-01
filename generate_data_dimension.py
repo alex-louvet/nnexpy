@@ -373,7 +373,7 @@ class DataInstance(object):
                     ball[e] = True
         betti = [0 for _ in range(self.dimension)]
         for i in range(len(centers)):
-            if ball[i] != 0:
+            if not ball[i]:
                 betti[compDim[i]] += 1
             else:
                 betti[0] += 1
