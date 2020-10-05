@@ -15,7 +15,7 @@ score = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 instanceNumber = int(sys.argv[1])
 
-mypath = '/home/alex/nn-expressiveness/models/instance_' + str(instanceNumber) + '/'
+mypath = '~/nn-expressiveness/models/instance_' + str(instanceNumber) + '/'
 
 with open(mypath + 'data_descriptor.pkl', 'rb') as input:
     centerList = pickle.load(input)
