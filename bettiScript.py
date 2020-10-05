@@ -8,6 +8,9 @@ import gc
 import tensorflow as tf
 tf.compat.v1.disable_eager_execution()
 
+holeDimList = [[2, 1], [2, 2], [2], [1], [3, 2],
+               [3, 3], [3], [2], [4, 3], [4, 4], [4], [3]]
+
 score = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 instanceNumber = int(sys.argv[1])
@@ -21,7 +24,7 @@ with open(mypath + 'data_descriptor.pkl', 'rb') as input:
     randomSeed = pickle.load(input)
 
 dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
-                                radiusList=radiusList, random=t.time(), bounds=bounds)
+                                radiusList=radiusList, random=t.time(), bounds=bounds, holeDimension=holeDimList[i])
 
 instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
 data_betti = instance.newBettiNumbers(threshold=0.04, nPoints=5000)
@@ -48,42 +51,42 @@ for directory in [x[0] for x in walk(mypath)][1:]:
     predictedTest = test.predict(model2, verbose=1)
     temp2 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=50000)
     if temp2 == data_betti:
-        score[0] += 1
+        score[1] += 1
 
     predictedTest = test.predict(model4, verbose=1)
     temp4 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=50000)
     if temp4 == data_betti:
-        score[0] += 1
+        score[2] += 1
 
     predictedTest = test.predict(model6, verbose=1)
     temp6 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=50000)
     if temp6 == data_betti:
-        score[0] += 1
+        score[3] += 1
 
     predictedTest = test.predict(model8, verbose=1)
     temp8 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=50000)
     if temp8 == data_betti:
-        score[0] += 1
+        score[4] += 1
 
     predictedTest = test.predict(model10, verbose=1)
     temp10 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=50000)
     if temp10 == data_betti:
-        score[0] += 1
+        score[5] += 1
 
     predictedTest = test.predict(model12, verbose=1)
     temp12 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=50000)
     if temp12 == data_betti:
-        score[0] += 1
+        score[6] += 1
 
     predictedTest = test.predict(model14, verbose=1)
     temp14 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=50000)
     if temp14 == data_betti:
-        score[0] += 1
+        score[7] += 1
 
     predictedTest = test.predict(model16, verbose=1)
     temp16 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=50000)
     if temp16 == data_betti:
-        score[0] += 1
+        score[8] += 1
 
     breakpoint()
     file = open(directory + '/betti.txt', "w")
