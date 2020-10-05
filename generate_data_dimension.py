@@ -242,18 +242,28 @@ class DataInstance(object):
         self.points = arg['points']
         self.dimension = arg['dimension']
 
-    def plot(self):
+    def plot(self, *args, **kwargs):
         import matplotlib.pyplot as plt
+        import random as r
+        from utils import selectRandomSublist
+        nPoints = kwargs.get('nPoints', self.pointsNumber)
+        noBack = kwargs.get('noBack', False)
+        if noBack:
+            begin = 1
+        else:
+            begin = 0
         if self.dimension > 3:
             raise ValueError(
                 'No display possible for dimension higher than 3')
         elif self.dimension == 2:
             plt.close()
-            for k in range(self.classNumber):
+            for k in range(begin, self.classNumber):
+                pointList = selectRandomSublist(
+                    [point for point in self.points if point.cluster == k], nPoints)
                 X = [point.coordinates[0]
-                     for point in self.points if point.cluster == k]
+                     for point in pointList]
                 Y = [point.coordinates[1]
-                     for point in self.points if point.cluster == k]
+                     for point in pointList]
                 plt.scatter(X, Y, marker='.', s=[0.3] * len(X))
                 plt.plot()
             plt.axis('equal')
@@ -262,13 +272,15 @@ class DataInstance(object):
             from mpl_toolkits import mplot3d
             import numpy as np
             ax = plt.axes(projection="3d")
-            for k in range(self.classNumber):
+            for k in range(begin, self.classNumber):
+                pointList = selectRandomSublist(
+                    [point for point in self.points if point.cluster == k], nPoints)
                 X = [point.coordinates[0]
-                     for point in self.points if point.cluster == k]
+                     for point in pointList]
                 Y = [point.coordinates[1]
-                     for point in self.points if point.cluster == k]
+                     for point in pointList]
                 Z = [point.coordinates[2]
-                     for point in self.points if point.cluster == k]
+                     for point in pointList]
                 ax.scatter3D(X, Y, Z, marker='.', s=[0.3] * len(X))
             plt.show()
 
@@ -372,6 +384,8 @@ class DataInstance(object):
                 if dist <= threshold:
                     ball[e] = True
         betti = [0 for _ in range(self.dimension)]
+        print('ball: ', ball)
+        print('compDim: ', compDim)
         for i in range(len(centers)):
             if not ball[i]:
                 betti[compDim[i]] += 1
