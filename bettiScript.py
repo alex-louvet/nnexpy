@@ -15,7 +15,7 @@ score = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 instanceNumber = int(sys.argv[1])
 
-mypath = '/home/alex/models/instance_' + str(instanceNumber) + '/'
+mypath = '~/nn-expressiveness/models/instance_' + str(instanceNumber) + '/'
 
 with open(mypath + 'data_descriptor.pkl', 'rb') as input:
     centerList = pickle.load(input)
@@ -24,7 +24,7 @@ with open(mypath + 'data_descriptor.pkl', 'rb') as input:
     randomSeed = pickle.load(input)
 
 dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
-                                radiusList=radiusList, random=t.time(), bounds=bounds, holeDimension=holeDimList[i])
+                                radiusList=radiusList, random=t.time(), bounds=bounds, holeDimension=holeDimList[instanceNumber])
 
 instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
 data_betti = instance.newBettiNumbers(threshold=0.04, nPoints=5000)
@@ -88,7 +88,6 @@ for directory in [x[0] for x in walk(mypath)][1:]:
     if temp16 == data_betti:
         score[8] += 1
 
-    breakpoint()
     file = open(directory + '/betti.txt', "w")
     file.write(str(temp1) + '\n')
     file.write(str(temp2) + '\n')

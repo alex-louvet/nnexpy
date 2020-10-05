@@ -384,8 +384,6 @@ class DataInstance(object):
                 if dist <= threshold:
                     ball[e] = True
         betti = [0 for _ in range(self.dimension)]
-        print('ball: ', ball)
-        print('compDim: ', compDim)
         for i in range(len(centers)):
             if not ball[i]:
                 betti[compDim[i]] += 1
