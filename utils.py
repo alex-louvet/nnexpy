@@ -31,7 +31,12 @@ def selectRandomSublist(L, s):
     import random as r
     res = []
     for _ in range(s):
-        random = r.randint(0, len(L) - 1)
+        if len(L) - 1 == 0:
+            random = 0
+        elif len(L) == 0:
+            break
+        else:
+            random = r.randint(0, len(L) - 1)
         a = L.pop(random)
         res.append(a)
     return res

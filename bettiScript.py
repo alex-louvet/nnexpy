@@ -29,7 +29,7 @@ dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
 instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
 data_betti = instance.newBettiNumbers(threshold=0.04, nPoints=5000)
 print(data_betti)
-test = dataDescriptor.generateTestData(pointsNumber=50000)
+test = dataDescriptor.generateData(pointsNumber=50000)
 
 for directory in [x[0] for x in walk(mypath)][1:]:
     print(directory)
