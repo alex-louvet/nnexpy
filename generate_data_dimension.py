@@ -344,11 +344,16 @@ class DataInstance(object):
         nPoints = kwargs.get('nPoints', self.pointsNumber)
         # Build graph
         G = Graph()
-        pointList = []
+        pointListTemp = []
         for point in self.points:
+            if point.cluster in targetCluster:
+                pointListTemp.append(np.array(point.coordinates))
+
+        pointList = []
+        for point in pointListTemp:
             random = r.random()
-            if point.cluster in targetCluster and random <= nPoints / self.pointsNumber:
-                pointList.append(np.array(point.coordinates))
+            if random <= nPoints/len(pointListTemp):
+                pointList.append(point)
 
         n = len(pointList)//100
         nodes = [i for i in range(len(pointList))]
