@@ -27,10 +27,11 @@ with open(mypath + 'data_descriptor.pkl', 'rb') as input:
 dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
                                 radiusList=radiusList, random=t.time(), bounds=bounds, holeDimension=holeDimList[instanceNumber])
 
-instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
+instance = dataDescriptor.generateData(
+    classNumber=2, pointsNumber=50000, randomSeed=10)
 data_betti = instance.newBettiNumbers(threshold=0.04, nPoints=5000)
 print(data_betti)
-test = dataDescriptor.generateData(pointsNumber=50000)
+test = dataDescriptor.generateData(pointsNumber=50000, randomSeed=10)
 
 for directory in [x[0] for x in walk(mypath)][1:]:
     print(directory)
