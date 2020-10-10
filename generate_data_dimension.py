@@ -189,6 +189,7 @@ class DataDescriptor(object):
                                                   (classNumber - 1) + (classIndex - 1)].coordinates)
                 temp = [i for i in range(self.dimension)]
                 dimHole = [False for _ in range(self.dimension)]
+                holeDimension = self.holeDimension[i]
                 for _ in range(self.dimension - self.holeDimension[i]):
                     random = r.randint(0, len(temp) - 1)
                     a = temp.pop(random)
@@ -198,9 +199,9 @@ class DataDescriptor(object):
                                          (classNumber - 1) + (classIndex - 1)]
                 for _ in range(int(pointDistribution[i])):
                     stratum = r.choice(radius)
-                    radiusProp = r.random()
+                    radiusProp = r.random()**(1/holeDimension)
                     radiusLength = (
-                        radiusProp * stratum[0] + (1 - radiusProp) * stratum[1])
+                        radiusProp * stratum[1] + (1 - radiusProp) * stratum[0])
                     temp = []
                     for i in range(len(center)):
                         if not dimHole[i]:
