@@ -8,6 +8,9 @@ import gc
 import tensorflow as tf
 tf.compat.v1.disable_eager_execution()
 
+random = [16, t.time(), t.time(), 17, 10, t.time(), t.time(),
+          10, 12, t.time(), t.time(), 15]
+
 holeDimList = [[2, 1], [2, 2], [2], [1], [3, 2],
                [3, 3], [3], [2], [4, 3], [4, 4], [4], [3]]
 
@@ -28,10 +31,11 @@ dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
                                 radiusList=radiusList, random=t.time(), bounds=bounds, holeDimension=holeDimList[instanceNumber])
 
 instance = dataDescriptor.generateData(
-    classNumber=2, pointsNumber=50000, randomSeed=10)
+    classNumber=2, pointsNumber=50000, randomSeed=random[instanceNumber])
 data_betti = instance.newBettiNumbers(threshold=0.04, nPoints=5000)
 print(data_betti)
-test = dataDescriptor.generateData(pointsNumber=50000, randomSeed=10)
+test = dataDescriptor.generateData(
+    pointsNumber=50000, randomSeed=random[instanceNumber])
 
 for directory in [x[0] for x in walk(mypath)][1:]:
     print(directory)
