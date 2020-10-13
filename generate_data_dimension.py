@@ -167,6 +167,19 @@ class DataDescriptor(object):
         classNumber = kwargs.get('classNumber', 2)
         pointsNumber = kwargs.get('pointsNumber', 1000)
         random = kwargs.get('random', None)
+        orientation = kwargs.get('orientation', None)
+        if orientation:
+            if len(orientation) != len(self.centerList):
+                raise(ValueError('Invalid length for orientation got {} expected {}'.format(
+                    len(orientation), len(self.centerList))))
+            for i, x in enumerate(self.holeDimension):
+                if len(orientation[i]) != self.dimension - x:
+                    raise ValueError('Invalid orientation got {} expected length {}'.format(
+                        orientation[i], self.dimension - x))
+                for y in orientation[i]:
+                    if y >= self.dimension:
+                        raise ValueError(
+                            'Orientation value represents unchanged coordinates and must be smaller than data dimension ({}), got {}'.format(self.dimension, y))
         if random:
             r.seed(random)
         points = []
@@ -190,10 +203,14 @@ class DataDescriptor(object):
                 temp = [i for i in range(self.dimension)]
                 dimHole = [False for _ in range(self.dimension)]
                 holeDimension = self.holeDimension[i]
-                for _ in range(self.dimension - self.holeDimension[i]):
-                    random = r.randint(0, len(temp) - 1)
-                    a = temp.pop(random)
-                    dimHole[a] = True
+                if orientation:
+                    for x in orientation[i]:
+                        dimHole[x] = True
+                else:
+                    for _ in range(self.dimension - self.holeDimension[i]):
+                        random = r.randint(0, len(temp) - 1)
+                        a = temp.pop(random)
+                        dimHole[a] = True
 
                 radius = self.radiusList[i *
                                          (classNumber - 1) + (classIndex - 1)]
