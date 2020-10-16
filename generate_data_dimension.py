@@ -360,6 +360,7 @@ class DataInstance(object):
         targetCluster = kwargs.get('targetCluster', [1])
         threshold = kwargs.get('threshold', 0.05)
         nPoints = kwargs.get('nPoints', self.pointsNumber)
+        errorRate = kwargs.get('errorRate', 0.005)
         # Build graph
         G = Graph()
         pointListTemp = []
@@ -393,19 +394,24 @@ class DataInstance(object):
         ball = [False for _ in range(conCompNumber)]
         for e, z in enumerate(conComp):
             x = list(z)
-            origin = pointList[x[0]]
-            temp = [0 for _ in range(len(origin))]
-            for k in range(len(x)):
-                temp += pointList[x[k]]
+            errorCount = 0
+            if len(x) > 1 and errorCount < errorRate*nPoints:
+                origin = pointList[x[0]]
+                temp = [0 for _ in range(len(origin))]
+                for k in range(len(x)):
+                    temp += pointList[x[k]]
 
-            temp /= len(x)
-            compDim.append(findPointStructDimension([pointList[e] for e in x]))
-            centers.append(temp)
-            for pt in x:
-                dist = np.sqrt(
-                    np.sum((pointList[pt] - centers[e])**2))
-                if dist <= threshold:
-                    ball[e] = True
+                temp /= len(x)
+                compDim.append(findPointStructDimension(
+                    [pointList[e] for e in x]))
+                centers.append(temp)
+                for pt in x:
+                    dist = np.sqrt(
+                        np.sum((pointList[pt] - centers[-1])**2))
+                    if dist <= threshold:
+                        ball[e] = True
+            else:
+                errorCount += 1
         betti = [0 for _ in range(self.dimension)]
         for i in range(len(centers)):
             if not ball[i]:
