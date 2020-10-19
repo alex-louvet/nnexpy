@@ -361,6 +361,7 @@ class DataInstance(object):
         threshold = kwargs.get('threshold', 0.05)
         nPoints = kwargs.get('nPoints', self.pointsNumber)
         errorRate = kwargs.get('errorRate', 0.005)
+        plot = kwargs.get('plot', False)
         # Build graph
         G = Graph()
         pointListTemp = []
@@ -391,6 +392,8 @@ class DataInstance(object):
         conCompNumber = number_connected_components(G)
         centers = []
         compDim = []
+        if plot:
+            points = []
         ball = [False for _ in range(conCompNumber)]
         for e, z in enumerate(conComp):
             x = list(z)
@@ -412,6 +415,16 @@ class DataInstance(object):
                         ball[e] = True
             else:
                 errorCount += 1
+            if plot:
+                for point in x:
+                    points.append(DataPoint(coordinates=pointList[point],
+                                            dimension=self.dimension, cluster=e + 1))
+
+        if plot:
+            temp = DataInstance({'dimension': self.dimension, 'points': points, 'pointsNumber': len(
+                points), 'classNumber': conCompNumber})
+            temp.plot(noBack=True)
+
         betti = [0 for _ in range(self.dimension)]
         for i in range(len(centers)):
             if not ball[i]:
