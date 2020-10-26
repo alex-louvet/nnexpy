@@ -157,7 +157,7 @@ class DataDescriptor(object):
                         X.append(point[0])
                         Y.append(point[1])
                         Z.append(point[2])
-                    ax.scatter3D(X, Y, Z, marker='.', s=[0.3] * len(X))
+                    ax.scatter3D(X, Y, Z, marker='.', s=[1] * len(X))
             plt.show()
 
     def generateData(self, *args, **kwargs):
@@ -299,7 +299,7 @@ class DataInstance(object):
                      for point in pointList]
                 Z = [point.coordinates[2]
                      for point in pointList]
-                ax.scatter3D(X, Y, Z, marker='.', s=[0.3] * len(X))
+                ax.scatter3D(X, Y, Z, marker='.', s=[1] * len(X))
             plt.show()
 
     def numpyify(self):
@@ -419,10 +419,11 @@ class DataInstance(object):
                 for point in x:
                     points.append(DataPoint(coordinates=pointList[point],
                                             dimension=self.dimension, cluster=e + 1))
+                print(e + 1, len(x))
 
         if plot:
             temp = DataInstance({'dimension': self.dimension, 'points': points, 'pointsNumber': len(
-                points), 'classNumber': conCompNumber})
+                points), 'classNumber': conCompNumber + 1})
             temp.plot(noBack=True)
 
         betti = [0 for _ in range(self.dimension)]

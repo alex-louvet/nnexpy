@@ -50,47 +50,47 @@ for directory in [x[0] for x in walk(mypath)][1:]:
     model16 = keras.models.load_model(directory + '/16layer.h5')
 
     predictedTest = test.predict(model1, verbose=1)
-    temp1 = predictedTest.newBettiNumbers(threshold=0.015, nPoints=10000)
+    temp1 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=2000)
     if temp1 == data_betti:
         score[0] += 1
 
     predictedTest = test.predict(model2, verbose=1)
-    temp2 = predictedTest.newBettiNumbers(threshold=0.015, nPoints=10000)
+    temp2 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=2000)
     if temp2 == data_betti:
         score[1] += 1
 
     predictedTest = test.predict(model4, verbose=1)
-    temp4 = predictedTest.newBettiNumbers(threshold=0.015, nPoints=10000)
+    temp4 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=2000)
     if temp4 == data_betti:
         score[2] += 1
 
     predictedTest = test.predict(model6, verbose=1)
-    temp6 = predictedTest.newBettiNumbers(threshold=0.015, nPoints=10000)
+    temp6 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=2000)
     if temp6 == data_betti:
         score[3] += 1
 
     predictedTest = test.predict(model8, verbose=1)
-    temp8 = predictedTest.newBettiNumbers(threshold=0.015, nPoints=10000)
+    temp8 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=2000)
     if temp8 == data_betti:
         score[4] += 1
 
     predictedTest = test.predict(model10, verbose=1)
-    temp10 = predictedTest.newBettiNumbers(threshold=0.015, nPoints=10000)
+    temp10 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=2000)
     if temp10 == data_betti:
         score[5] += 1
 
     predictedTest = test.predict(model12, verbose=1)
-    temp12 = predictedTest.newBettiNumbers(threshold=0.015, nPoints=10000)
+    temp12 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=2000)
     if temp12 == data_betti:
         score[6] += 1
 
     predictedTest = test.predict(model14, verbose=1)
-    temp14 = predictedTest.newBettiNumbers(threshold=0.015, nPoints=10000)
+    temp14 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=2000)
     if temp14 == data_betti:
         score[7] += 1
 
     predictedTest = test.predict(model16, verbose=1)
-    temp16 = predictedTest.newBettiNumbers(threshold=0.015, nPoints=10000)
+    temp16 = predictedTest.newBettiNumbers(threshold=0.04, nPoints=2000)
     if temp16 == data_betti:
         score[8] += 1
 
