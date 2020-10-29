@@ -23,9 +23,9 @@ dataDescriptorList = [
                                                          ], random=randomSeed, minStrata=1, maxStrata=3),
     DataDescriptor(dimension=3, nHoles=5, holeDimension=[2, 2, 3, 3, 3
                                                          ], random=randomSeed, minStrata=1, maxStrata=3),
-    DataDescriptor(dimension=3, nHoles=2, holeDimension=[2, 3, 3, 3
+    DataDescriptor(dimension=3, nHoles=4, holeDimension=[2, 3, 3, 3
                                                          ], random=randomSeed, minStrata=1, maxStrata=3),
-    DataDescriptor(dimension=3, nHoles=2, holeDimension=[2, 3, 3
+    DataDescriptor(dimension=3, nHoles=3, holeDimension=[2, 3, 3
                                                          ], random=randomSeed, minStrata=1, maxStrata=3),
     DataDescriptor(dimension=3, nHoles=4, holeDimension=[2, 2, 2, 3
                                                          ], random=randomSeed, minStrata=1, maxStrata=3),
@@ -37,7 +37,7 @@ dataDescriptorList = [
                                                          ], random=randomSeed, minStrata=1, maxStrata=3),
     DataDescriptor(dimension=3, nHoles=5, holeDimension=[2, 2, 3, 3, -3
                                                          ], random=randomSeed, minStrata=1, maxStrata=3),
-    DataDescriptor(dimension=3, nHoles=2, holeDimension=[2, 3, 3, -3
+    DataDescriptor(dimension=3, nHoles=4, holeDimension=[2, 3, 3, -3
                                                          ], random=randomSeed, minStrata=1, maxStrata=3),
 ]
 
