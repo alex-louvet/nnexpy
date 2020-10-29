@@ -14,16 +14,21 @@ def independent(x, S):
     return rank == len(mat[0])
 
 
-def findPointStructDimension(pointList):
+def findPointStructDimension(pointList, *args, **kwargs):
     import numpy as np
+    errorRate = kwargs.get('errorRate', 0.005)
     A = [list(x) for x in pointList]
     B = [A[0]]
     A = A[1:]
+    errorCount = 0
     while len(A) > 0 and len(B) < len(B[0]):
         head = A[0]
         A = A[1:]
         if independent(head, B):
-            B.append(head)
+            if errorCount < len(pointList) * errorRate:
+                errorCount += 1
+            else:
+                B.append(head)
     return len(B) - 1
 
 

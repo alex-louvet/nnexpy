@@ -11,41 +11,34 @@ import json
 randomSeed = 468643654
 
 dataDescriptorList = [
-    DataDescriptor(dimension=2, nHoles=2, centerList=[DataPoint(coordinates=(0.24, 0.25)), DataPoint(
-        coordinates=(0.75, 0.75))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[2, 1]),
-
-    DataDescriptor(dimension=2, nHoles=2, centerList=[DataPoint(coordinates=(0.24, 0.25)), DataPoint(
-        coordinates=(0.74, 0.75))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[2, 2]),
-
-    DataDescriptor(dimension=2, nHoles=1, centerList=[DataPoint(coordinates=(
-        0.51, 0.49))], radiusList=[[(0.1, 0.13)]], holeDimension=[2]),
-
-    DataDescriptor(dimension=2, nHoles=1, centerList=[DataPoint(coordinates=(
-        0.51, 0.49))], radiusList=[[(0.1, 0.13)]], holeDimension=[1]),
-
-    DataDescriptor(dimension=3, nHoles=2, centerList=[DataPoint(coordinates=(0.25, 0.24, 0.25)), DataPoint(
-        coordinates=(0.74, 0.75, 0.75))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[3, 2]),
-
-    DataDescriptor(dimension=3, nHoles=2, centerList=[DataPoint(coordinates=(0.25, 0.24, 0.25)), DataPoint(
-        coordinates=(0.74, 0.75, 0.75))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[3, 3]),
-
-    DataDescriptor(dimension=3, nHoles=1, centerList=[DataPoint(coordinates=(
-        0.51, 0.49, 0.5))], radiusList=[[(0.1, 0.13)]], holeDimension=[3]),
-
-    DataDescriptor(dimension=3, nHoles=1, centerList=[DataPoint(coordinates=(
-        0.51, 0.49, 0.5))], radiusList=[[(0.1, 0.13)]], holeDimension=[2]),
-
-    DataDescriptor(dimension=4, nHoles=2, centerList=[DataPoint(coordinates=(0.25, 0.24, 0.25, 0.26)), DataPoint(
-        coordinates=(0.74, 0.75, 0.75, 0.76))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[4, 3]),
-
-    DataDescriptor(dimension=4, nHoles=2, centerList=[DataPoint(coordinates=(0.25, 0.24, 0.25, 0.26)), DataPoint(
-        coordinates=(0.74, 0.75, 0.75, 0.76))], radiusList=[[(0, 0.1)], [(0.1, 0.13)]], holeDimension=[4, 4]),
-
-    DataDescriptor(dimension=4, nHoles=1, centerList=[DataPoint(coordinates=(
-        0.51, 0.49, 0.5, 0.5))], radiusList=[[(0.1, 0.13)]], holeDimension=[4]),
-
-    DataDescriptor(dimension=4, nHoles=1, centerList=[DataPoint(coordinates=(
-        0.51, 0.49, 0.5, 0.5))], radiusList=[[(0.1, 0.13)]], holeDimension=[3]),
+    DataDescriptor(dimension=3, nHoles=3, holeDimension=[2, 2, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=4, holeDimension=[2, 2, 2, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=4, holeDimension=[2, 2, 3, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=5, holeDimension=[2, 2, 2, 3, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=6, holeDimension=[2, 2, 2, 3, 3, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=5, holeDimension=[2, 2, 3, 3, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=2, holeDimension=[2, 3, 3, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=2, holeDimension=[2, 3, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=4, holeDimension=[2, 2, 2, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=4, holeDimension=[2, -2, -3, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=5, holeDimension=[2, 2, -2, 3, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=6, holeDimension=[2, 2, -2, -3, 3, 3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=5, holeDimension=[2, 2, 3, 3, -3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
+    DataDescriptor(dimension=3, nHoles=2, holeDimension=[2, 3, 3, -3
+                                                         ], random=randomSeed, minStrata=1, maxStrata=3),
 ]
 
 iterNum = 1
@@ -72,14 +65,18 @@ for j, x in enumerate(dataDescriptorList):
                 os.remove(os.path.join(root, file))
 
     dataDescriptor = x
+    instance = dataDescriptor.generateData(
+        pointsNumber=10000, random=randomSeed)
 
     with open(myRootPath + 'data_descriptor.pkl', 'wb') as output:
         pickle.dump(dataDescriptor.centerList, output, pickle.HIGHEST_PROTOCOL)
         pickle.dump(dataDescriptor.radiusList, output, pickle.HIGHEST_PROTOCOL)
         pickle.dump(dataDescriptor.bounds, output, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(dataDescriptor.holeDimension,
+                    output, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(instance.orientation, output, pickle.HIGHEST_PROTOCOL)
         pickle.dump(randomSeed, output, pickle.HIGHEST_PROTOCOL)
 
-    instance = dataDescriptor.generateData(classNumber=2, pointsNumber=10000)
     data, label = instance.numpyify()
     data, label = shuffle(data, label, random_state=0)
 
@@ -100,7 +97,7 @@ for j, x in enumerate(dataDescriptorList):
                 for file in files:
                     os.remove(os.path.join(root, file))
 
-        for i in [1, 2, 4, 6, 8, 10, 12, 14, 16]:
+        for i in [1, 2, 3, 4, 5, 6, 7, 8]:
             with open('/tmp/data_file.pkl', 'wb') as dump:
                 pickle.dump(data, dump, pickle.HIGHEST_PROTOCOL)
 
@@ -109,3 +106,5 @@ for j, x in enumerate(dataDescriptorList):
 
             subprocess.call(['python3', 'rasScript.py', str(i), str(input_shape[0]),
                              str(mypath), str(epoch_number), '/tmp/data_file.pkl', '/tmp/label_file.pkl'])
+
+    subprocess.call(['python3', 'bettiScript.py', str(j)])

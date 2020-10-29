@@ -62,11 +62,15 @@ class DataDescriptor(object):
 
         if not radiusList:
             radiusList = []
-            for _ in range(nHoles):
+            for k in range(nHoles):
                 temp = []
-                temp.append(0)
-                temp.append(r.random() * maxRadius / (2 * (nHoles)))
-                for _ in range(1, r.randint(minStrata, maxStrata)):
+                start = 0
+                if self.holeDimension[k] < 0:
+                    temp.append(0)
+                    temp.append(r.random() * maxRadius / (2 * (nHoles)))
+                    start = 1
+                    self.holeDimension[k] = -1 * self.holeDimension[k]
+                for _ in range(start, r.randint(minStrata, maxStrata)):
                     temp.append(r.random() * maxRadius / (2 * (nHoles)))
                     temp.append(r.random() * maxRadius / (2 * nHoles))
                 temp.sort()
@@ -173,9 +177,9 @@ class DataDescriptor(object):
                 raise(ValueError('Invalid length for orientation got {} expected {}'.format(
                     len(orientation), len(self.centerList))))
             for i, x in enumerate(self.holeDimension):
-                if len(orientation[i]) != self.dimension - x:
+                if len(orientation[i]) != self.dimension - abs(x):
                     raise ValueError('Invalid orientation got {} expected length {}'.format(
-                        orientation[i], self.dimension - x))
+                        orientation[i], self.dimension - abs(x)))
                 for y in orientation[i]:
                     if y >= self.dimension:
                         raise ValueError(
@@ -197,26 +201,31 @@ class DataDescriptor(object):
             overallSquaredSum = np.sum(pointDistribution)
             pointDistribution = np.round(
                 pointDistribution * pointsNumber / overallSquaredSum)
+            generatedOrientation = []
             for i in range(len(pointDistribution)):
                 center = np.array(self.centerList[i *
                                                   (classNumber - 1) + (classIndex - 1)].coordinates)
                 temp = [i for i in range(self.dimension)]
                 dimHole = [False for _ in range(self.dimension)]
                 holeDimension = self.holeDimension[i]
+                holeOrientation = []
                 if orientation:
                     for x in orientation[i]:
+                        holeOrientation.append(orientation[i])
                         dimHole[x] = True
                 else:
-                    for _ in range(self.dimension - self.holeDimension[i]):
+                    for _ in range(self.dimension - abs(self.holeDimension[i])):
                         random = r.randint(0, len(temp) - 1)
                         a = temp.pop(random)
                         dimHole[a] = True
+                        holeOrientation.append(a)
+                generatedOrientation.append(holeOrientation)
 
                 radius = self.radiusList[i *
                                          (classNumber - 1) + (classIndex - 1)]
                 for _ in range(int(pointDistribution[i])):
                     stratum = r.choice(radius)
-                    radiusProp = r.random()**(1/holeDimension)
+                    radiusProp = r.random()**(1/abs(holeDimension))
                     radiusLength = (
                         radiusProp * stratum[1] + (1 - radiusProp) * stratum[0])
                     temp = []
@@ -248,7 +257,7 @@ class DataDescriptor(object):
                             test = False
                 if test:
                     points.append(temp)
-        return DataInstance({'classNumber': classNumber, 'pointsNumber': pointsNumber, 'points': points, 'dimension': self.dimension})
+        return DataInstance({'classNumber': classNumber, 'pointsNumber': pointsNumber, 'points': points, 'dimension': self.dimension, 'orientation': generatedOrientation})
 
 
 class DataInstance(object):
@@ -259,6 +268,7 @@ class DataInstance(object):
         self.pointsNumber = arg['pointsNumber']
         self.points = arg['points']
         self.dimension = arg['dimension']
+        self.orientation = arg['orientation']
 
     def plot(self, *args, **kwargs):
         import matplotlib.pyplot as plt
@@ -317,7 +327,7 @@ class DataInstance(object):
                 coordinates=data[i],
                 cluster=label[i]
             ))
-        return DataInstance({'dimension': self.dimension, 'classNumber': np.max(label) + 1, 'pointsNumber': len(label), 'points': points})
+        return DataInstance({'dimension': self.dimension, 'classNumber': np.max(label) + 1, 'pointsNumber': len(label), 'points': points, 'orientation': self.orientation})
 
     def predict_and_evaluate(self, model, *args, **kwargs):
         data, label = self.numpyify()
