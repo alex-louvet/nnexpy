@@ -339,28 +339,20 @@ class DataInstance(object):
                 res += 1
         return res / len(label)
 
-    def bettiNumbers(self, *args, **kwargs):
+    def computePersistence(self, *args, **kwargs):
         from gudhi import RipsComplex
         import random as r
         nPoints = kwargs.get('nPoints', self.pointsNumber)
-        targetCluster = kwargs.get('targetCluster', [1])
-        maxEdge = kwargs.get('maxEdge', 10)
-        maxDim = kwargs.get('maxDim', self.dimension)
+        min_persistence = kwargs.get('min_persistence', 0)
         pointList = []
         for point in self.points:
             random = r.random()
             if point.cluster in targetCluster and random <= nPoints / self.pointsNumber:
                 pointList.append(point.coordinates)
-        print('random choice')
-        point_complex = RipsComplex(max_edge_length=maxEdge, points=pointList)
-        print('rips complex')
-        simplex_tree = point_complex.create_simplex_tree(
-            max_dimension=maxDim)
-        print('simplex tree')
-        persistence = simplex_tree.persistence(
-            min_persistence=0.01)
-        print(persistence)
-        return simplex_tree.persistent_betti_numbers(from_value=0.05, to_value=0.05)
+        point_complex = AlphaComplex(points=pointList)
+        simplex_tree = point_complex.create_simplex_tree()
+        persistence = simplex_tree.persistence(min_persistence=min_persistence)
+        return persistence
 
     def newBettiNumbers(self, *args, **kwargs):
         from networkx import Graph, connected_components, number_connected_components

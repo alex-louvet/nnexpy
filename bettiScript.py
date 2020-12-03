@@ -8,7 +8,7 @@ import gc
 import tensorflow as tf
 tf.compat.v1.disable_eager_execution()
 
-score = [0, 0, 0, 0, 0, 0, 0, 0]
+score = np.array([0, 0, 0, 0, 0, 0, 0, 0])
 
 instanceNumber = int(sys.argv[1])
 
@@ -25,7 +25,7 @@ with open(mypath + 'data_descriptor.pkl', 'rb') as input:
 
 dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
                                 radiusList=radiusList, bounds=bounds, holeDimension=holeDimension, random=randomSeed)
-
+"""
 THRESHOLD = 0.04
 
 for i in range(len(radiusList)):
@@ -40,15 +40,18 @@ for i in range(len(centerList)):
 
 THRESHOLD = 0.9*THRESHOLD
 print(THRESHOLD)
+"""
 
 instance = dataDescriptor.generateData(
     classNumber=2, pointsNumber=50000, orientation=orientation, random=randomSeed)
-data_betti = instance.newBettiNumbers(
-    threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
+data_persistence = instance.computePersistence(10000)
 test = dataDescriptor.generateData(
     pointsNumber=50000, orientation=orientation, random=randomSeed)
 
+k = 0
+
 for directory in [x[0] for x in walk(mypath)][1:]:
+    k += 1
     model1 = keras.models.load_model(directory + '/1layer.h5')
     model2 = keras.models.load_model(directory + '/2layer.h5')
     model3 = keras.models.load_model(directory + '/3layer.h5')
@@ -59,64 +62,58 @@ for directory in [x[0] for x in walk(mypath)][1:]:
     model8 = keras.models.load_model(directory + '/8layer.h5')
 
     predictedTest = test.predict(model1, verbose=1)
-    temp1 = predictedTest.newBettiNumbers(
-        threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
-    if temp1 == data_betti:
-        score[0] += 1
+    temp1 = predictedTest.computePersistence(nPoints=10000)
+    bottle1 = gudhi.bottleneck_distance(data_persistence, temp1)
+    score[0] += bottle1
 
     predictedTest = test.predict(model2, verbose=1)
-    temp2 = predictedTest.newBettiNumbers(
-        threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
-    if temp2 == data_betti:
-        score[1] += 1
+    temp2 = predictedTest.computePersistence(nPoints=10000)
+    bottle2 = gudhi.bottleneck_distance(data_persistence, temp1)
+    score[1] += bottle2
 
     predictedTest = test.predict(model1, verbose=1)
-    temp3 = predictedTest.newBettiNumbers(
-        threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
-    if temp3 == data_betti:
-        score[2] += 1
+    temp3 = predictedTest.computePersistence(nPoints=10000)
+    bottle3 = gudhi.bottleneck_distance(data_persistence, temp1)
+    score[2] += bottle3
 
     predictedTest = test.predict(model4, verbose=1)
-    temp4 = predictedTest.newBettiNumbers(
-        threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
-    if temp4 == data_betti:
-        score[3] += 1
+    temp4 = predictedTest.computePersistence(nPoints=10000)
+    bottle4 = gudhi.bottleneck_distance(data_persistence, temp1)
+    score[3] += bottle4
 
     predictedTest = test.predict(model1, verbose=1)
-    temp5 = predictedTest.newBettiNumbers(
-        threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
-    if temp5 == data_betti:
-        score[4] += 1
+    temp5 = predictedTest.computePersistence(nPoints=10000)
+    bottle5 = gudhi.bottleneck_distance(data_persistence, temp1)
+    score[4] += bottle5
 
     predictedTest = test.predict(model6, verbose=1)
-    temp6 = predictedTest.newBettiNumbers(
-        threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
-    if temp6 == data_betti:
-        score[5] += 1
+    temp6 = predictedTest.computePersistence(nPoints=10000)
+    bottle6 = gudhi.bottleneck_distance(data_persistence, temp1)
+    score[5] += bottle6
 
     predictedTest = test.predict(model1, verbose=1)
-    temp7 = predictedTest.newBettiNumbers(
-        threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
-    if temp7 == data_betti:
-        score[6] += 1
+    temp7 = predictedTest.computePersistence(nPoints=10000)
+    bottle7 = gudhi.bottleneck_distance(data_persistence, temp1)
+    score[6] += bottle7
 
     predictedTest = test.predict(model8, verbose=1)
-    temp8 = predictedTest.newBettiNumbers(
-        threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
-    if temp8 == data_betti:
-        score[7] += 1
+    temp8 = predictedTest.computePersistence(nPoints=10000)
+    bottle8 = gudhi.bottleneck_distance(data_persistence, temp1)
+    score[7] += bottle8
 
     file = open(directory + '/betti.txt', "w")
-    file.write(str(temp1) + '\n')
-    file.write(str(temp2) + '\n')
-    file.write(str(temp3) + '\n')
-    file.write(str(temp4) + '\n')
-    file.write(str(temp5) + '\n')
-    file.write(str(temp6) + '\n')
-    file.write(str(temp7) + '\n')
-    file.write(str(temp8) + '\n')
+    file.write(str(bottle1) + '\n')
+    file.write(str(bottle2) + '\n')
+    file.write(str(bottle3) + '\n')
+    file.write(str(bottle4) + '\n')
+    file.write(str(bottle5) + '\n')
+    file.write(str(bottle6) + '\n')
+    file.write(str(bottle7) + '\n')
+    file.write(str(bottle8) + '\n')
     file.close()
 
+score = score / k
+score = list(score)
 file = open(mypath + 'information.txt', "a")
 file.write('data betti numbers: ' + str(data_betti) + "\n")
 file.write('# of correspondence: ' + str(score) + "\n")
