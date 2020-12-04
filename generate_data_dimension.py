@@ -339,20 +339,54 @@ class DataInstance(object):
                 res += 1
         return res / len(label)
 
-    def computePersistence(self, *args, **kwargs):
-        from gudhi import RipsComplex
+    def computeSimplex(self, *args, **kwargs):
+        import gudhi
         import random as r
+        import numpy as np
         nPoints = kwargs.get('nPoints', self.pointsNumber)
-        min_persistence = kwargs.get('min_persistence', 0)
-        pointList = []
+        targetCluster = kwargs.get('targetCluster', [1])
+        pointListTemp = []
         for point in self.points:
+            if point.cluster in targetCluster:
+                pointListTemp.append(np.array(point.coordinates))
+
+        pointList = []
+        for point in pointListTemp:
             random = r.random()
-            if point.cluster in targetCluster and random <= nPoints / self.pointsNumber:
-                pointList.append(point.coordinates)
-        point_complex = AlphaComplex(points=pointList)
+            if random <= nPoints/len(pointListTemp):
+                pointList.append(point)
+        if len(pointList) == 0:
+            return []
+        point_complex = gudhi.AlphaComplex(points=pointList)
         simplex_tree = point_complex.create_simplex_tree()
-        persistence = simplex_tree.persistence(min_persistence=min_persistence)
-        return persistence
+        return simplex_tree
+
+    def computeBottleNeckDistance(self, instance, *args, **kwargs):
+        import gudhi
+        import numpy as np
+        min_persistence = kwargs.get('min_persistence', 0)
+        nPoints = kwargs.get('nPoints', self.pointsNumber)
+        targetCluster = kwargs.get('targetCluster', [1])
+        persistence = instance.computeSimplex(
+            nPoints=nPoints, targetCluster=targetCluster)
+        if persistence == []:
+            return -1
+        persistence.persistence(min_persistence=min_persistence)
+        compareTo = self.computeSimplex(
+            nPoints=nPoints, targetCluster=targetCluster)
+        if compareTo == []:
+            return -1
+        compareTo.persistence(min_persistence=min_persistence)
+        maxDistance = 0
+        for dim in range(self.dimension):
+            persistence_intervals = np.sqrt(
+                persistence.persistence_intervals_in_dimension(dim))
+            compareToIntervals = np.sqrt(
+                compareTo.persistence_intervals_in_dimension(dim))
+            bottleneck_distance = gudhi.bottleneck_distance(
+                persistence_intervals, compareToIntervals)
+            maxDistance = max(maxDistance, bottleneck_distance)
+        return maxDistance
 
     def newBettiNumbers(self, *args, **kwargs):
         from networkx import Graph, connected_components, number_connected_components
