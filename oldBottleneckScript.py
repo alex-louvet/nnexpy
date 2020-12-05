@@ -107,7 +107,7 @@ for directory in [x[0] for x in walk(mypath)][1:]:
     print(score)
     print(k)
 
-    file = open(directory + '/betti.txt', "w")
+    file = open(directory + '/bottleneck.txt', "w")
     file.write(str(bottle1) + '\n')
     file.write(str(bottle2) + '\n')
     file.write(str(bottle4) + '\n')
