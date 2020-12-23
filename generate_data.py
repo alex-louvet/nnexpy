@@ -8,7 +8,7 @@ class DataDescriptor(object):
                             Bounds({
                                 'xmin': -1,
                                 'xmax': 1,
-                                'ymin': -1,
+                                'ymin': -2,
                                 'ymax': 1
                             }))
         centerList = kwargs.get('centerList', None)
