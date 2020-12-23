@@ -1,5 +1,5 @@
 class DataDescriptor(object):
-    """docstring for DataDescriptor."""
+    """Data descriptor is the bone frame for data genration"""
 
     def __init__(self, *args, **kwargs):
         import random as r
