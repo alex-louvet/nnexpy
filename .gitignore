@@ -136,3 +136,4 @@ instance_*.zip
 *.ipynb
 katlas.*
 .vscode/
+nnexpy/__pycache__/

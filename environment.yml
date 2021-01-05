@@ -1,4 +1,4 @@
-name: research
+name: nexpy
 channels:
   - conda-forge
   - anaconda
@@ -158,5 +158,4 @@ dependencies:
   - zeromq=4.3.1=he6710b0_3
   - zipp=0.6.0=py_0
   - zlib=1.2.11=h7b6447c_3
-prefix: /home/alexandre/miniconda3/envs/research
-
+prefix: /home/alexandre/miniconda3/envs/nexpy

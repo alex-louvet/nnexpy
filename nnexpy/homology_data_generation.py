@@ -1,5 +1,5 @@
 class DataDescriptor(object):
-    """Data descriptor is the bone frame for data genration"""
+    """Data descriptor is the bone frame for data generation"""
 
     def __init__(self, *args, **kwargs):
         import random as r
@@ -273,7 +273,7 @@ class DataInstance(object):
     def plot(self, *args, **kwargs):
         import matplotlib.pyplot as plt
         import random as r
-        from utils import selectRandomSublist
+        from .homology_utils import selectRandomSublist
         nPoints = kwargs.get('nPoints', self.pointsNumber)
         noBack = kwargs.get('noBack', False)
         if noBack:
@@ -392,7 +392,7 @@ class DataInstance(object):
         from networkx import Graph, connected_components, number_connected_components
         import numpy as np
         import random as r
-        from utils import findPointStructDimension
+        from .homology_utils import findPointStructDimension
         targetCluster = kwargs.get('targetCluster', [1])
         threshold = kwargs.get('threshold', 0.05)
         nPoints = kwargs.get('nPoints', self.pointsNumber)
