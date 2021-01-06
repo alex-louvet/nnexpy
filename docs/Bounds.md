@@ -8,7 +8,10 @@
 
 ## Constructors
 
-`__init__(dimension=2, boundCoordinates=[{'min': 0, 'max' : '1'}, {'min': 0, 'max' : '1'}])`: If both `dimension` and `boundCoordinates` are specified they must correspond according to the explanation in Class Variables.
+```python
+__init__(dimension=2, boundCoordinates=[{'min': 0, 'max' : '1'}, {'min': 0, 'max' : '1'}])
+```
+If both `dimension` and `boundCoordinates` are specified they must correspond according to the explanation in Class Variables.
 
 ## Methods
 

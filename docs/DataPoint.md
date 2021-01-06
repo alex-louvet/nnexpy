@@ -10,8 +10,15 @@
 
 ## Constructors
 
-`__init__(dimension=2, coordinates=(random.random(), random.random()), cluster=0)`: A data point
+```python
+__init__(dimension=2, coordinates=(random.random(), random.random()), cluster=0)
+```
+A data point
 
 ## Methods
 
-`distanceTo(DataPoint)` (`return float`): Computes the euclidian distance from the `DataPoint` to another one passed in argument
+```python
+distanceTo(DataPoint):
+  return float
+```
+Computes the euclidian distance from the `DataPoint` to another one passed in argument

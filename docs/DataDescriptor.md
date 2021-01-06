@@ -17,12 +17,30 @@
 
 ## Constructors
 
-`__init__(dimension=2, bounds=Bounds(dimension=2), radiusList=None, maxStrata=1, minStrata=1, random=None, nHoles=None, holeDimension=[2]*nHoles, orientation=[[]*nHoles])`: Generate a `DataDescriptor` generating the missing information randomly with `random` as see if different from `None`
+```python
+__init__(dimension=2, bounds=Bounds(dimension=2), radiusList=None, maxStrata=1, minStrata=1, random=None, nHoles=None, holeDimension=[2]*nHoles, orientation=[[]*nHoles])
+```
+Generate a `DataDescriptor` generating the missing information randomly with `random` as see if different from `None`
 
 ## Methods
 
-`generateTestData(nPoints=1000)` (`return DataInstance`): Generates a `DataInstance` corresponding to the `DataDescriptor`'s `Bounds`  with only one class
+```python
+generateTestData(nPoints=1000):
+  return DataInstance
+```
+Generates a `DataInstance` corresponding to the `DataDescriptor`'s `Bounds`  with only one class
 
-`plot()`: Plot the data instance if `dimension < 4`
+---
 
-`generateData(classNumber=2, nPoints=1000, random=None)` (`return DataInstance`): Generate a `DataInstance` with `classNumber` classes and using `random` as the seed. 
+```python
+plot():
+```
+Plot the data instance if `dimension < 4`
+
+---
+
+```python
+generateData(classNumber=2, nPoints=1000, random=None):
+  return DataInstance
+```
+Generate a `DataInstance` with `classNumber` classes and using `random` as the seed. 
