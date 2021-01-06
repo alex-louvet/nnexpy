@@ -62,7 +62,7 @@ bettiNumbers(targetCluster=[1], threshold=0.05, nPoints=self.nPoints, maxDim=sel
 Computes the betti numbers of the `DataInstance` using `gudhi` for more information go to [gudhi's documentation](http://gudhi.gforge.inria.fr/python/latest/)
 
 ```python
-newBettiNumbers(targetCluster=[1], threshold=0.05, nPoints=self.nPoints, errorRate=0.005, plot=False):
+newBettiNumbers(targetCluster=[1], threshold=0.05, nPoints=self.nPoints, errorRate=0.005, plot=False, showProgress=False):
   return [int]
 ```
 Computes the betti numbers of the `DataInstance` using a custom algorithm for up to `nPoints` evenly distributed in `targetCluster`

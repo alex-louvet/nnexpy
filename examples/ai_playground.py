@@ -3,7 +3,7 @@ import sys
 import os
 import pickle
 from sklearn.utils import shuffle
-from generate_data_dimension import DataDescriptor, DataPoint, DataInstance
+from nnexpy import DataDescriptor, DataPoint, DataInstance
 import numpy as np
 import subprocess
 import json
@@ -66,7 +66,7 @@ for j, x in enumerate(dataDescriptorList):
 
     dataDescriptor = x
     instance = dataDescriptor.generateData(
-        pointsNumber=10000, random=randomSeed)
+        nPoints=10000, random=randomSeed)
 
     with open(myRootPath + 'data_descriptor.pkl', 'wb') as output:
         pickle.dump(dataDescriptor.centerList, output, pickle.HIGHEST_PROTOCOL)
@@ -74,7 +74,8 @@ for j, x in enumerate(dataDescriptorList):
         pickle.dump(dataDescriptor.bounds, output, pickle.HIGHEST_PROTOCOL)
         pickle.dump(dataDescriptor.holeDimension,
                     output, pickle.HIGHEST_PROTOCOL)
-        pickle.dump(instance.orientation, output, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(dataDescriptor.orientation,
+                    output, pickle.HIGHEST_PROTOCOL)
         pickle.dump(randomSeed, output, pickle.HIGHEST_PROTOCOL)
 
     data, label = instance.numpyify()

@@ -421,7 +421,6 @@ class DataInstance(object):
         nPoints = kwargs.get('nPoints', self.nPoints)
         errorRate = kwargs.get('errorRate', 0.005)
         plot = kwargs.get('plot', False)
-        showProgress = kwargs.get('showProgress', False)
         # Build graph
         G = Graph()
         pointListTemp = []
@@ -439,7 +438,7 @@ class DataInstance(object):
         nodes = [i for i in range(len(pointList))]
         edges = []
         for i in range(len(pointList)):
-            if i % 100 == 0 and showProgress:
+            if i % 100 == 0:
                 print(str(i//100) + " / " + str(n))
             for j in range(i+1, len(pointList)):
                 dist = np.sqrt(
@@ -479,6 +478,7 @@ class DataInstance(object):
                 for point in x:
                     points.append(DataPoint(coordinates=pointList[point],
                                             dimension=self.dimension, cluster=e + 1))
+                print(e + 1, len(x))
 
         if plot:
             temp = DataInstance({'dimension': self.dimension, 'points': points, 'nPoints': len(

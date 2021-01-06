@@ -1,15 +1,14 @@
 from tensorflow import keras
-from trajectories import *
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 from mpl_toolkits import mplot3d
 import pickle
-from generate_data_dimension import *
+from nnexpy import DataDescriptor, DataInstance, DataPoint, KnotDescriptor
 
 for k in range(3):
-    mypath_init = "./models/3d4d_2500_15_training/instance_" + str(k) + "/"
+    mypath_init = "./models/instance_" + str(k) + "/"
 
     with open(mypath_init + 'data_descriptor.pkl', 'rb') as input:
         centerList = pickle.load(input)
@@ -20,9 +19,9 @@ for k in range(3):
     dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
                                     radiusList=radiusList, bounds=bounds)
 
-    instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
+    instance = dataDescriptor.generateData(classNumber=2, nPoints=50000)
     data_betti = instance.bettiNumbers()
-    test = dataDescriptor.generateTestData(pointsNumber=50000)
+    test = dataDescriptor.generateTestData(nPoints=50000)
     print(data_betti)
 
     for trainingnumb in range(15):
@@ -37,13 +36,11 @@ for k in range(3):
                 modelPath = os.path.join(mypath, file)
 
                 if (k < 2):
-                    trajectory = figureEight3D(nPoints=5000)
-                    trajectory = [(trajectory[0][i], trajectory[1][i], trajectory[2][i])
-                                  for i in range(len(trajectory[0]))]
+                    trajectory = KnotDescriptor.fromTemplate(
+                        'figureEight3D', nPoints=5000)
                 else:
-                    trajectory = figureEight4D(nPoints=5000)
-                    trajectory = [(trajectory[0][i], trajectory[1][i], trajectory[2]
-                                   [i], trajectory[3][i]) for i in range(len(trajectory[0]))]
+                    trajectory = KnotDescriptor.fromTemplate(
+                        'figureEight4D', nPoints=5000)
 
                 model = keras.models.load_model(modelPath)
                 print(modelPath)
@@ -66,7 +63,7 @@ for k in range(3):
                 for x in trajectory:
                     init = x
                     for i in range(len(layersWeights) - 1):
-                        next = tanh(
+                        next = np.tanh(
                             np.dot(np.transpose(layersWeights[i]), init) + layersBias[i])
                         res[i].append(next)
                         init = next
@@ -81,7 +78,7 @@ for k in range(3):
                     pcaRes[i] = principalComponents
 
                 for i, x in enumerate(pcaRes):
-                    desc = knotDescriptor(x)
+                    desc = KnotDescriptor.fromTrajectory(x)
                     determinant = desc.determinant()
                     print(determinant)
                     """
@@ -104,8 +101,6 @@ for k in range(3):
                                     pickle.HIGHEST_PROTOCOL)
                         pickle.dump(modelBetti, output,
                                     pickle.HIGHEST_PROTOCOL)
-"""
-                    """
                     fig = plt.figure()
                     ax = plt.axes(projection="3d")
                     ax.scatter3D([e[0] for e in x], [e[1]

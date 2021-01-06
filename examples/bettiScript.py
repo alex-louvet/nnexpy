@@ -1,5 +1,5 @@
 import pickle
-from generate_data_dimension import *
+from nnexpy import DataDescriptor, DataInstance
 from tensorflow import keras
 from os import walk, path
 import time as t
@@ -23,8 +23,8 @@ with open(mypath + 'data_descriptor.pkl', 'rb') as input:
     orientation = pickle.load(input)
     randomSeed = pickle.load(input)
 
-dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
-                                radiusList=radiusList, bounds=bounds, holeDimension=holeDimension, random=randomSeed)
+dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList, radiusList=radiusList,
+                                bounds=bounds, holeDimension=holeDimension, random=randomSeed, orientation=orientation)
 
 THRESHOLD = 0.04
 
@@ -42,11 +42,11 @@ THRESHOLD = 0.9*THRESHOLD
 print(THRESHOLD)
 
 instance = dataDescriptor.generateData(
-    classNumber=2, pointsNumber=50000, orientation=orientation, random=randomSeed)
+    classNumber=2, nPoints=50000, random=randomSeed)
 data_betti = instance.newBettiNumbers(
     threshold=THRESHOLD, nPoints=min(10000, 2000 * 0.04 / THRESHOLD))
 test = dataDescriptor.generateData(
-    pointsNumber=50000, orientation=orientation, random=randomSeed)
+    nPoints=50000, random=randomSeed)
 
 for directory in [x[0] for x in walk(mypath)][1:]:
     model1 = keras.models.load_model(directory + '/1layer.h5')

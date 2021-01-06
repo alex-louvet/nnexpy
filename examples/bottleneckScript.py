@@ -1,5 +1,5 @@
 import pickle
-from generate_data_dimension import *
+from nnexpy import DataDescriptor, DataInstance
 from tensorflow import keras
 from os import walk, path
 import time as t
@@ -19,7 +19,7 @@ holeDimList = [[2, 1], [2, 2], [2], [1], [3, 2],
 score = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 instanceNumber = int(sys.argv[1])
-mypath = '/home/alex/nn-expressiveness/models/instance_' + \
+mypath = './models/instance_' + \
     str(instanceNumber) + '/'
 
 with open(mypath + 'data_descriptor.pkl', 'rb') as input:
@@ -28,13 +28,13 @@ with open(mypath + 'data_descriptor.pkl', 'rb') as input:
     bounds = pickle.load(input)
     randomSeed = pickle.load(input)
 
-dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
-                                radiusList=radiusList, random=t.time(), bounds=bounds, holeDimension=holeDimList[instanceNumber])
+dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList, radiusList=radiusList, random=t.time(
+), bounds=bounds, holeDimension=holeDimList[instanceNumber], orientation=orientation[instanceNumber])
 
 instance = dataDescriptor.generateData(
-    classNumber=2, pointsNumber=50000, orientation=orientation[instanceNumber])
+    classNumber=2, nPoints=50000)
 test = dataDescriptor.generateData(
-    pointsNumber=50000, orientation=orientation[instanceNumber])
+    nPoints=50000)
 
 k = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 

@@ -87,6 +87,7 @@ class KnotDescriptor(object):
             matrix[i][c1] = 2
             matrix[i][c2] = -1
             matrix[i][c3] = -1
+        print(matrix)
         matrix = np.delete(matrix, 0, 0)
         matrix = np.delete(matrix, 0, 1)
 

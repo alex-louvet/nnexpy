@@ -1,5 +1,5 @@
 import pickle
-from generate_data import *
+from nnexpy import DataDescriptor, DataInstance
 import numpy as np
 from tensorflow import keras
 from sklearn.utils import shuffle
@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import gudhi
 
 # change path to visualize different models
-mypath = "./models/D(0,2,0)/"
+mypath = "./models/"
 
 with open(mypath + 'data_descriptor.pkl', 'rb') as input:
     centerList = pickle.load(input)
@@ -20,11 +20,11 @@ with open(mypath + 'data_descriptor.pkl', 'rb') as input:
 dataDescriptor = DataDescriptor(nHoles=len(centerList), centerList=centerList,
                                 radiusList=radiusList, random=randomSeed, bounds=bounds)
 
-instance = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
+instance = dataDescriptor.generateData(classNumber=2, nPoints=50000)
 print(instance.bettiNumbers())
 instance.plot()
-instance_test = dataDescriptor.generateData(classNumber=2, pointsNumber=50000)
-test = dataDescriptor.generateTestData(pointsNumber=50000)
+instance_test = dataDescriptor.generateData(classNumber=2, nPoints=50000)
+test = dataDescriptor.generateTestData(nPoints=50000)
 data, label = instance.numpyify()
 data, label = shuffle(data, label, random_state=0)
 
