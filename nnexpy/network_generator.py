@@ -1,6 +1,4 @@
 class NetworkGenerator(object):
-    """Docstring"""
-
     def build_model(self, *args, **kwargs):
         import tensorflow as tf
         depth = kwargs.get('depth', 1)

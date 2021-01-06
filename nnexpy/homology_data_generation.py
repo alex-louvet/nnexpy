@@ -1,6 +1,4 @@
 class DataDescriptor(object):
-    """Data descriptor is the bone frame for data generation"""
-
     def __init__(self, *args, **kwargs):
         import random as r
         import math as m
@@ -37,6 +35,7 @@ class DataDescriptor(object):
 
         self.holeDimension = kwargs.get(
             'holeDimension', [self.dimension] * nHoles)
+        self.orientation = kwargs.get('orientation', None)
 
         if random:
             r.seed(random)
@@ -103,12 +102,36 @@ class DataDescriptor(object):
         self.centerList = centerList
         self.radiusList = radiusList
 
+        if self.orientation:
+            if len(self.orientation) != len(self.centerList):
+                raise(ValueError('Invalid length for orientation got {} expected {}'.format(
+                    len(self.orientation), len(self.centerList))))
+            for i, x in enumerate(self.holeDimension):
+                if len(self.orientation[i]) != self.dimension - abs(x):
+                    raise ValueError('Invalid orientation got {} expected length {}'.format(
+                        self.orientation[i], self.dimension - abs(x)))
+                for y in self.orientation[i]:
+                    if y >= self.dimension:
+                        raise ValueError(
+                            'Orientation value represents unchanged coordinates and must be smaller than data dimension ({}), got {}'.format(self.dimension, y))
+
+        else:
+            orientation = []
+            for _ in range(len(self.centerList)):
+                holeOrientation = []
+                for _ in range(self.dimension - abs(self.holeDimension[i])):
+                    random = r.randint(0, len(temp) - 1)
+                    a = temp.pop(random)
+                    holeOrientation.append(a)
+                orientation.append(holeOrientation)
+            self.orientation = orientation
+
     def generateTestData(self, *args, **kwargs):
         import random as r
         import numpy as np
-        pointsNumber = kwargs.get('pointsNumber', 1000)
+        nPoints = kwargs.get('nPoints', 1000)
         points = []
-        for _ in range(pointsNumber):
+        for _ in range(nPoints):
             temp = []
             for i in range(self.dimension):
                 temp.append(
@@ -117,7 +140,7 @@ class DataDescriptor(object):
                 coordinates=temp,
                 cluster=0
             ))
-        return DataInstance({'dimension': self.dimension, 'classNumber': 1, 'pointsNumber': pointsNumber, 'points': points})
+        return DataInstance({'dimension': self.dimension, 'classNumber': 1, 'nPoints': nPoints, 'points': points})
 
     def plot(self):
         import math as m
@@ -169,21 +192,8 @@ class DataDescriptor(object):
         import random as r
         import numpy as np
         classNumber = kwargs.get('classNumber', 2)
-        pointsNumber = kwargs.get('pointsNumber', 1000)
+        nPoints = kwargs.get('nPoints', 1000)
         random = kwargs.get('random', None)
-        orientation = kwargs.get('orientation', None)
-        if orientation:
-            if len(orientation) != len(self.centerList):
-                raise(ValueError('Invalid length for orientation got {} expected {}'.format(
-                    len(orientation), len(self.centerList))))
-            for i, x in enumerate(self.holeDimension):
-                if len(orientation[i]) != self.dimension - abs(x):
-                    raise ValueError('Invalid orientation got {} expected length {}'.format(
-                        orientation[i], self.dimension - abs(x)))
-                for y in orientation[i]:
-                    if y >= self.dimension:
-                        raise ValueError(
-                            'Orientation value represents unchanged coordinates and must be smaller than data dimension ({}), got {}'.format(self.dimension, y))
         if random:
             r.seed(random)
         points = []
@@ -200,26 +210,15 @@ class DataDescriptor(object):
             pointDistribution = np.array(pointDistribution)
             overallSquaredSum = np.sum(pointDistribution)
             pointDistribution = np.round(
-                pointDistribution * pointsNumber / overallSquaredSum)
-            generatedOrientation = []
+                pointDistribution * nPoints / overallSquaredSum)
             for i in range(len(pointDistribution)):
                 center = np.array(self.centerList[i *
                                                   (classNumber - 1) + (classIndex - 1)].coordinates)
                 temp = [i for i in range(self.dimension)]
-                dimHole = [False for _ in range(self.dimension)]
+                dimHole = [j in self.orientation[i]
+                           for j in range(self.dimension)]
+
                 holeDimension = self.holeDimension[i]
-                holeOrientation = []
-                if orientation:
-                    for x in orientation[i]:
-                        holeOrientation.append(orientation[i])
-                        dimHole[x] = True
-                else:
-                    for _ in range(self.dimension - abs(self.holeDimension[i])):
-                        random = r.randint(0, len(temp) - 1)
-                        a = temp.pop(random)
-                        dimHole[a] = True
-                        holeOrientation.append(a)
-                generatedOrientation.append(holeOrientation)
 
                 radius = self.radiusList[i *
                                          (classNumber - 1) + (classIndex - 1)]
@@ -241,7 +240,7 @@ class DataDescriptor(object):
                     points.append(
                         DataPoint(coordinates=center + randomVector, cluster=classIndex))
 
-        for _ in range(pointsNumber):
+        for _ in range(nPoints):
             test = False
             while not test:
                 test = True
@@ -257,24 +256,21 @@ class DataDescriptor(object):
                             test = False
                 if test:
                     points.append(temp)
-        return DataInstance({'classNumber': classNumber, 'pointsNumber': pointsNumber, 'points': points, 'dimension': self.dimension, 'orientation': generatedOrientation})
+        return DataInstance({'classNumber': classNumber, 'nPoints': nPoints, 'points': points, 'dimension': self.dimension})
 
 
 class DataInstance(object):
-    """docstring for DataInstance."""
-
     def __init__(self, arg):
         self.classNumber = arg['classNumber']
-        self.pointsNumber = arg['pointsNumber']
+        self.nPoints = arg['nPoints']
         self.points = arg['points']
         self.dimension = arg['dimension']
-        self.orientation = arg['orientation']
 
     def plot(self, *args, **kwargs):
         import matplotlib.pyplot as plt
         import random as r
         from .homology_utils import selectRandomSublist
-        nPoints = kwargs.get('nPoints', self.pointsNumber)
+        nPoints = kwargs.get('nPoints', self.nPoints)
         noBack = kwargs.get('noBack', False)
         if noBack:
             begin = 1
@@ -327,9 +323,9 @@ class DataInstance(object):
                 coordinates=data[i],
                 cluster=label[i]
             ))
-        return DataInstance({'dimension': self.dimension, 'classNumber': np.max(label) + 1, 'pointsNumber': len(label), 'points': points, 'orientation': self.orientation})
+        return DataInstance({'dimension': self.dimension, 'classNumber': np.max(label) + 1, 'nPoints': len(label), 'points': points, 'orientation': self.orientation})
 
-    def predict_and_evaluate(self, model, *args, **kwargs):
+    def predictAndEvaluate(self, model, *args, **kwargs):
         data, label = self.numpyify()
         label_evaluation = model.predict_classes(
             data, **kwargs)
@@ -343,7 +339,7 @@ class DataInstance(object):
         import gudhi
         import random as r
         import numpy as np
-        nPoints = kwargs.get('nPoints', self.pointsNumber)
+        nPoints = kwargs.get('nPoints', self.nPoints)
         targetCluster = kwargs.get('targetCluster', [1])
         pointListTemp = []
         for point in self.points:
@@ -365,7 +361,7 @@ class DataInstance(object):
         import gudhi
         import numpy as np
         min_persistence = kwargs.get('min_persistence', 0)
-        nPoints = kwargs.get('nPoints', self.pointsNumber)
+        nPoints = kwargs.get('nPoints', self.nPoints)
         targetCluster = kwargs.get('targetCluster', [1])
         persistence = instance.computeSimplex(
             nPoints=nPoints, targetCluster=targetCluster)
@@ -388,6 +384,33 @@ class DataInstance(object):
             maxDistance = max(maxDistance, bottleneck_distance)
         return maxDistance
 
+    def bettiNumbers(self, *args, **kwargs):
+        from gudhi import RipsComplex
+        import random as r
+        import numpy as np
+        nPoints = kwargs.get('nPoints', self.nPoints)
+        targetCluster = kwargs.get('targetCluster', [1])
+        maxEdge = kwargs.get('maxEdge', 10)
+        maxDim = kwargs.get('maxDim', self.dimension)
+        fromValue = kwargs.get('fromValue', 0.05)
+        toValue = kwargs.get('toValue', 0.05)
+        pointListTemp = []
+        for point in self.points:
+            if point.cluster in targetCluster:
+                pointListTemp.append(np.array(point.coordinates))
+
+        pointList = []
+        for point in pointListTemp:
+            random = r.random()
+            if random <= nPoints/len(pointListTemp):
+                pointList.append(point)
+        point_complex = RipsComplex(
+            max_edge_length=maxEdge, points=pointList)
+        simplex_tree = point_complex.create_simplex_tree(
+            max_dimension=maxDim)
+        persistence = simplex_tree.persistence()
+        return simplex_tree.persistent_betti_numbers(from_value=fromValue, to_value=toValue)
+
     def newBettiNumbers(self, *args, **kwargs):
         from networkx import Graph, connected_components, number_connected_components
         import numpy as np
@@ -395,7 +418,7 @@ class DataInstance(object):
         from .homology_utils import findPointStructDimension
         targetCluster = kwargs.get('targetCluster', [1])
         threshold = kwargs.get('threshold', 0.05)
-        nPoints = kwargs.get('nPoints', self.pointsNumber)
+        nPoints = kwargs.get('nPoints', self.nPoints)
         errorRate = kwargs.get('errorRate', 0.005)
         plot = kwargs.get('plot', False)
         # Build graph
@@ -458,7 +481,7 @@ class DataInstance(object):
                 print(e + 1, len(x))
 
         if plot:
-            temp = DataInstance({'dimension': self.dimension, 'points': points, 'pointsNumber': len(
+            temp = DataInstance({'dimension': self.dimension, 'points': points, 'nPoints': len(
                 points), 'classNumber': conCompNumber + 1})
             temp.plot(noBack=True)
 
@@ -472,8 +495,6 @@ class DataInstance(object):
 
 
 class DataPoint(object):
-    """docstring for DataPoint."""
-
     def __init__(self, *args, **kwargs):
         self.cluster = kwargs.get('cluster', 0)
         if "dimension" in kwargs:
@@ -513,8 +534,6 @@ class DataPoint(object):
 
 
 class Bounds(object):
-    """docstring for Bounds."""
-
     def __init__(self, *args, **kwargs):
         if "dimension" in kwargs:
             if "boundsCoordinates" in kwargs:

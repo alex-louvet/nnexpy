@@ -56,7 +56,13 @@ computeBottleNeckDistance(DataInstance, min_persistence=0, nPoints=self.nPoints,
 Computes the bottleneckDistance of the `DataInstance` to another one passed in argument using up to `nPoints` from the instances and restricting the study to points with classes in `targetCluster`  
 
 ```python
-newBettiNumbers(targetCluster=[1], threshold=0.05,nPoints=self.nPoints, errorRate=0.005, plot=False):
+bettiNumbers(targetCluster=[1], threshold=0.05, nPoints=self.nPoints, maxDim=self.dimension, maxEdge=10, fromValue=0.05, toValue=0.05):
+  return [int]
+```
+Computes the betti numbers of the `DataInstance` using `gudhi` for more information go to [gudhi's documentation](http://gudhi.gforge.inria.fr/python/latest/)
+
+```python
+newBettiNumbers(targetCluster=[1], threshold=0.05, nPoints=self.nPoints, errorRate=0.005, plot=False):
   return [int]
 ```
 Computes the betti numbers of the `DataInstance` using a custom algorithm for up to `nPoints` evenly distributed in `targetCluster`
