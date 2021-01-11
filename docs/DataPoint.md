@@ -1,5 +1,7 @@
 # DataPoint
 
+`DataPoint` stores a point coordinates as well as its class (`cluster`)
+
 ## Class Variables
 
 `dimension` (`int`): Dimension of the `DataPoint`. Corresponds to the length of `coordinates`

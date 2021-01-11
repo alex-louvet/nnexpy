@@ -1,5 +1,7 @@
 # NetworkGenerator
 
+This class provides method to serialize the creation of Keras + Tensorflow network
+
 ## Class Variables
 
 ## Constructors

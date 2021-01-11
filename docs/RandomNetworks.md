@@ -1,5 +1,7 @@
 # RandomNetworks
 
+The random networks object is a memory-light object to emulate the weight and bias of a Keras + Tensorflow network
+
 ## Class Variables
 
 `layers` (`[Layer]`): Layers of the network

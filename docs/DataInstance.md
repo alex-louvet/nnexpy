@@ -1,5 +1,7 @@
 # DataInstance
 
+A Data Instance stores the points it is generated from a `DataDescriptor` 
+
 ## Class Variables
 
 `classNumber` (`int`): The number of classes in the `DataInstance`

@@ -1,5 +1,7 @@
 # DataDescriptor
 
+Data Descriptor is an object used to store all information that caracterize a set of balls and spheres (or thick spheres)
+
 ## Class Variables
 
 `dimension` (`int`): Dimension of the data. Corresponds to the dimension of the `Bounds` and `DataPoint` in `centerList` 

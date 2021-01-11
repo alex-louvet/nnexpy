@@ -1,5 +1,7 @@
 # Bounds
 
+Bounds represent the bounds in which the data live. It is used when you want to generate your data an will not be taken into account if you specify `centerList` and `radiusList`. 
+
 ## Class Variables
 
 `boundCoordinates` (`[{'min': float , 'max': float}]`): Represents the minimum and maximum of the bounds. Length corresponds to `dimension`

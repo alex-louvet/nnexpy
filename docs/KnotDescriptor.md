@@ -1,5 +1,7 @@
 # KnotDescriptor
 
+Knot Descriptor respresents a knot by its crossings and components with the intent of being as close as possible to mathematic theory of knots
+
 ## Class Variables
 
 `crossing` (`[int]`): index of points at the crossing of the knot (last point of the component before the crossing)
