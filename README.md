@@ -2,11 +2,11 @@
 
 ## Introduction
 
-This repository is a compilation of my work during my master course at Kyushu Institute of Technology. A clone of the repository is also available on [KIT Honda Lab's github](https://github.com/honda-lab-kit/nn-expressiveness). The purpose of this repository is to provide with some python code to get started with homology and knot theory as a mean to evaluate neural networks' expressivity.
+This repository is a compilation of my work during my master course at Kyushu Institute of Technology. A clone of the repository is also available on [KIT Honda Lab's github](https://github.com/honda-lab-kit/nn-expressiveness). The purpose of this repository is to provide with some python code to get started with homology and knot theory as a mean to evaluate neural networks' expressiveness.
 
 ## Requirement
 
-To run this code you need python3 as well as some libraries. They can be installed unsing Conda and I personnaly used a conda environment which [environment file](environment.yml) is available in this repository.
+To run this code you need python3 as well as some libraries. They can be installed using Conda and I personally used a conda environment which [environment file](environment.yml) is available in this repository.
 
 To setup a functional conda environment with conda cli you simply need to use the following command:
 
@@ -46,5 +46,5 @@ The [`examples`](examples/) folder is a collection of the various scripts I have
 * [`compare_results.py`](examples/compare_results.py): Script to use `bettiScript`, `oldBettiScript` and `oldBottleneckScript` as subprocesses
 * [`oldBettiScript.py`](examples/oldBettiScript.py): Another version of betti number computation of Keras + Tensorflow neural networks on a `DataDescriptor`
 * [`rasScript.py`](examples/rasScript.py): Trains a Keras + Tensorflow neural network on a given `DataInstance`
-* [`test_random_networks.py`](examples/test_random_networks.py): Generate PCA of random networks with an imput trajectory
+* [`test_random_networks.py`](examples/test_random_networks.py): Generate PCA of random networks with an input trajectory
 * [`visualize_results.py`](examples/visualize_results.py): Plot the predicted data of Keras + Tensorflow networks on a `DataInstance`
